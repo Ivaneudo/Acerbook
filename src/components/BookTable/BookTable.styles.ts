@@ -67,6 +67,30 @@ export const TitleCell = styled.span`
   color: ${({ theme }) => theme.colors.text};
 `;
 
+export const ActionsCell = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const TableIconButton = styled.button`
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: ${({ theme }) => theme.colors.codeBg};
+  border: 1px solid ${({ theme }) => theme.colors.surfaceBorder};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.textMuted};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
 interface StatusBadgeProps {
   status: ReadingStatus;
 }

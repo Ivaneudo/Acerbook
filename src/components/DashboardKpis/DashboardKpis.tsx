@@ -8,7 +8,7 @@ import {
   ShoppingBag,
 } from 'lucide-react';
 import { useLibrary } from '../../contexts/LibraryContext';
-import { formatReadingDays } from '../../utils/csvParser';
+import { formatReadingDays } from '../../utils/libraryUtils';
 import {
   KpiAccentValue,
   KpiCard,

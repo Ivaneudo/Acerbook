@@ -2,27 +2,27 @@
 
 Aplicação web moderna e responsiva para gerenciamento, catalogação e visualização de uma **Biblioteca Pessoal & Controle de Leitura**, construída com **React, TypeScript, Vite e Emotion (`@emotion/react` / `@emotion/styled`)**.
 
-O projeto consome dados estruturados em formato CSV (`acervo.csv`, `lidos.csv`, `para_ler.csv` e `para_comprar.csv`) para transformar listas de leitura em um painel interativo com métricas dinâmicas, cálculo de tempo de leitura, busca instantânea sem acentos, filtros inteligentes e alternância de tema claro/escuro.
+O projeto utiliza um **banco de dados em JSON** (`src/data/db/*.json`) organizado por coleção e agrupado por categorias, transformando listas de leitura em um painel interativo com métricas dinâmicas, cálculo de tempo de leitura, busca instantânea sem acentos, filtros inteligentes e alternância de tema claro/escuro.
 
 ---
 
 ## ✨ Funcionalidades Principais
 
-- **4 Visões Especializadas:**
-  - **Meu Acervo:** livros em posse com data de início, data final, tempo de leitura em dias, número de tentativas e badge automática de status (*Concluído*, *Lendo* ou *Não iniciado*).
-  - **Livros Lidos:** histórico completo das obras já concluídas.
-  - **Para Ler:** fila/wishlist de próximas leituras.
-  - **Lista de Compras:** livros já lidos que ainda faltam no acervo pessoal.
+- **4 Visões Especializadas (`src/data/db/`):**
+  - **Meu Acervo (`acervo.json`):** livros em posse com data de início, data final, cálculo automático de dias de leitura, tentativas e badge de status (*Concluído*, *Lendo* ou *Não iniciado*).
+  - **Livros Lidos (`lidos.json`):** histórico completo das obras já concluídas.
+  - **Para Ler (`para_ler.json`):** fila/wishlist de próximas leituras.
+  - **Lista de Compras (`para_comprar.json`):** livros já lidos que ainda faltam no acervo pessoal.
 - **Dashboard de KPIs em Tempo Real:**
-  - Totais de cada lista, cálculo dinâmico de cobertura do acervo (*percentual de livros lidos que já estão na estante*) e **Tempo de Leitura** (*somatória total de dias lidos e média por livro*).
+  - Totais de cada lista, **percentual de livros do acervo já concluídos** e **Tempo de Leitura** (*somatória total de dias lidos e média por livro*).
 - **Busca e Filtros Inteligentes:**
   - Pesquisa instantânea ignorando acentos e maiúsculas/minúsculas.
   - Chips interativos de categoria com contagem e filtro por autor.
-  - Agrupamento automático por **Categoria → Autor**, alternável entre visualização em **Cards (Grid responsivo)** e **Tabela compacta**.
+  - Agrupamento automático por **Categoria → Autor**, alternável entre **Cards (Grid responsivo)** e **Tabela compacta**.
 - **Tema Escuro & Claro:**
-  - *Obsidian & Crimson* (Dark) e *Porcelain & Crisp White* (Light), com detecção da preferência do sistema (`prefers-color-scheme`) e persistência no `localStorage`.
-- **Exportação e Importação de CSV:**
-  - Permite exportar qualquer lista em `.csv` e, em ambiente local, importar novos `.csv` diretamente pela interface.
+  - *Obsidian & Crimson* (Dark) e *Porcelain & Crisp White* (Light), com detecção automática (`prefers-color-scheme`) e persistência no `localStorage`.
+- **Formulário de Cadastro/Edição (Local) & Exportação JSON:**
+  - Em ambiente local, permite adicionar, editar e remover livros via formulário e exportar o arquivo `.json` atualizado pronto para o banco em `src/data/db/`.
 
 ---
 
@@ -30,12 +30,12 @@ O projeto consome dados estruturados em formato CSV (`acervo.csv`, `lidos.csv`, 
 
 Como esta aplicação é publicada como uma vitrine pública **sem sistema de login ou autenticação**:
 
-- **Em Produção (`npm run build`):** a customização e importação de arquivos `.csv` é **automaticamente desativada** para preservar os dados originais da biblioteca. Ao clicar em **Importar CSV**, um modal customizado é exibido explicando que o recurso está bloqueado em produção e direcionando o visitante para este repositório para rodar localmente com seus próprios arquivos CSV. A exportação (`.csv` somente leitura) continua disponível.
-- **Em Desenvolvimento Local (`npm run dev`):** o recurso **Importar CSV** fica totalmente liberado, permitindo fazer upload de novos arquivos `.csv` pelo navegador (salvos no `localStorage`) ou restaurar os dados originais a qualquer momento.
+- **Em Produção (`npm run build`):** o formulário de cadastro/edição fica **automaticamente desativado** para preservar os dados oficiais do repositório. Ao clicar em **Adicionar Livro**, um modal customizado é exibido explicando o motivo e mostrando como rodar localmente com sua própria base JSON. O botão **Exportar JSON** continua disponível em modo somente leitura.
+- **Em Desenvolvimento Local (`npm run dev`):** o botão **Adicionar Livro** abre o formulário completo para cadastrar novos livros (e habilita editar/excluir diretamente nos cards e na tabela), salvando no `localStorage` e permitindo exportar o `.json` atualizado.
 
 ---
 
-## 🚀 Como Rodar Localmente e Usar com Seus Próprios CSVs
+## 🚀 Como Rodar Localmente e Montar Sua Própria Biblioteca
 
 ### Pré-requisitos
 - **Node.js** 18+ e **npm** instalados.
@@ -45,8 +45,8 @@ Como esta aplicação é publicada como uma vitrine pública **sem sistema de lo
 1. Clone este repositório e acesse a pasta do projeto:
 
 ```bash
-git clone https://github.com/Ivaneudo/acerbook.git
-cd acerbook
+git clone https://github.com/Ivaneudo/Acerbook.git
+cd Acerbook
 ```
 
 2. Instale as dependências:
@@ -65,33 +65,42 @@ npm run dev
 
 ---
 
-## 📂 Como Adicionar Seus Próprios Arquivos CSV
+## 🗄️ Estrutura do Banco de Dados JSON
 
-Você tem duas formas de personalizar a biblioteca para o seu uso pessoal:
+Os dados ficam organizados na pasta `src/data/db/` em 4 arquivos agrupados por categoria:
 
-### Opção A — Pela interface (em ambiente local)
-1. Rodando o projeto com `npm run dev`, clique em **Importar CSV** no topo da página.
-2. Escolha a lista de destino (`acervo`, `lidos`, `para_ler` ou `para_comprar`) e selecione o seu arquivo `.csv`.
-3. Os dados serão salvos automaticamente no `localStorage` do seu navegador.
+- `src/data/db/acervo.json`
+- `src/data/db/lidos.json`
+- `src/data/db/para_ler.json`
+- `src/data/db/para_comprar.json`
 
-### Opção B — Editando os dados padrão no código (ideal para publicar a sua própria versão)
-Substitua o conteúdo das strings CSV em `src/data/booksData.ts` seguindo o formato de colunas abaixo:
+### Como atualizar os dados
 
-- **`ACERVO_CSV` (`acervo.csv`):**
-```csv
-id,categoria,autor,livro,dataInicio,dataFinal,tentativas
-1,Literatura Brasileira / Clássicos,Clarice Lispector,A paixão segundo G.H,17/12/2025,13/02/2026,1
+1. **Via Formulário (recomendado no dia a dia):** rodando `npm run dev`, adicione ou edite livros pelo botão **Adicionar Livro** (ou ícones nos cards) e clique em **Exportar JSON** para baixar o arquivo `.json` atualizado e substituir em `src/data/db/`.
+2. **Editando diretamente:** basta alterar os arquivos em `src/data/db/` seguindo o formato:
+
+```json
+{
+  "colecao": "acervo",
+  "categorias": [
+    {
+      "categoria": "Literatura Brasileira / Clássicos",
+      "livros": [
+        {
+          "id": 1,
+          "autor": "Clarice Lispector",
+          "livro": "A paixão segundo G.H",
+          "dataInicio": "17/12/2025",
+          "dataFinal": "13/02/2026",
+          "tentativas": "1"
+        }
+      ]
+    }
+  ]
+}
 ```
 
-- **`LIDOS_CSV`, `PARA_LER_CSV` e `PARA_COMPRAR_CSV`:**
-```csv
-id,categoria,autor,livro
-1,Literatura Brasileira / Clássicos,Clarice Lispector,A Hora da Estrela
-```
-
-> **Dicas de preenchimento:**
-> - Campos que contenham vírgulas no título, categoria ou nome do autor devem estar entre aspas duplas (ex.: `"Quem é você, Alasca?"`).
-> - Use o formato `DD/MM/AAAA` em `dataInicio` e `dataFinal` no `acervo.csv` para que o cálculo de dias de leitura e o **Tempo de Leitura** total sejam contabilizados automaticamente.
+> Use o formato `DD/MM/AAAA` em `dataInicio` e `dataFinal` no `acervo.json` para que o cálculo de dias e o KPI **Tempo de Leitura** funcionem automaticamente.
 
 ---
 
@@ -101,19 +110,11 @@ id,categoria,autor,livro
 - **Estilização:** `@emotion/react` + `@emotion/styled` (**zero arquivos `.css`**)
 - **Ícones:** `lucide-react` e SVGs inline
 - **Tipografia:** `JetBrains Mono` (display/títulos) e `Inter` (corpo)
-- **Padrão de Componentes:** separação estrita `NomeDoComponente.tsx` (lógica e JSX) + `NomeDoComponente.styles.ts` (estilos Emotion com `shouldForwardProp`)
+- **Padrão de Componentes:** `NomeDoComponente.tsx` (lógica e JSX) + `NomeDoComponente.styles.ts` (Emotion com `shouldForwardProp`)
 
 ---
 
 ## 📦 Build de Produção
-
-Para validar a tipagem e gerar o pacote otimizado para deploy (Vercel, Netlify, GitHub Pages, etc.):
-
-```bash
-npm run build
-```
-
-Para testar localmente como a aplicação se comporta no modo produção (incluindo o modal de customização desativada):
 
 ```bash
 npm run build

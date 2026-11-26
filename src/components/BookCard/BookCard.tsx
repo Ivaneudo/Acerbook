@@ -1,11 +1,12 @@
 import React from 'react';
-import { BookOpen, CheckCircle2, Clock, User } from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, Pencil, Trash2, User } from 'lucide-react';
+import { useLibrary } from '../../contexts/LibraryContext';
 import { AcervoItem, BookItem, ReadingStatus } from '../../types/book';
 import {
   formatReadingDays,
   getReadingDurationDays,
   getReadingStatus,
-} from '../../utils/csvParser';
+} from '../../utils/libraryUtils';
 import {
   AcervoMetaGrid,
   AuthorLine,
@@ -13,7 +14,9 @@ import {
   Card,
   CardBody,
   CardFooter,
+  CardIconButton,
   CardTop,
+  CardTopActions,
   CategoryPill,
   IdBadge,
   MetaItem,
@@ -43,6 +46,8 @@ function formatField(value?: string): string {
 }
 
 export const BookCard: React.FC<BookCardProps> = ({ item, isAcervo }) => {
+  const { activeTab, isReadOnlyProd, openEditModal, deleteBook } = useLibrary();
+
   const acervoData = isAcervo && isAcervoRecord(item) ? item : null;
   const status = acervoData ? getReadingStatus(acervoData) : null;
   const durationDays = acervoData ? getReadingDurationDays(acervoData) : null;
@@ -58,12 +63,34 @@ export const BookCard: React.FC<BookCardProps> = ({ item, isAcervo }) => {
     <Card>
       <CardTop>
         <IdBadge>#{String(item.id).padStart(2, '0')}</IdBadge>
-        {status && (
-          <StatusBadge status={status}>
-            {renderStatusIcon(status)}
-            {status}
-          </StatusBadge>
-        )}
+        <CardTopActions>
+          {status && (
+            <StatusBadge status={status}>
+              {renderStatusIcon(status)}
+              {status}
+            </StatusBadge>
+          )}
+          {!isReadOnlyProd && (
+            <>
+              <CardIconButton
+                type="button"
+                onClick={() => openEditModal(item)}
+                title="Editar livro"
+                aria-label={`Editar ${item.livro}`}
+              >
+                <Pencil size={12} />
+              </CardIconButton>
+              <CardIconButton
+                type="button"
+                onClick={() => deleteBook(activeTab, item.id)}
+                title="Remover livro"
+                aria-label={`Remover ${item.livro}`}
+              >
+                <Trash2 size={12} />
+              </CardIconButton>
+            </>
+          )}
+        </CardTopActions>
       </CardTop>
 
       <CardBody>

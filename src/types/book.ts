@@ -17,11 +17,41 @@ export interface AcervoItem extends BookItem {
   tentativas: string;
 }
 
+export interface JsonBookEntry {
+  id: number;
+  autor: string;
+  livro: string;
+}
+
+export interface JsonAcervoEntry extends JsonBookEntry {
+  dataInicio: string;
+  dataFinal: string;
+  tentativas: string;
+}
+
+export interface JsonCollectionFile<TEntry extends JsonBookEntry = JsonBookEntry> {
+  colecao: LibraryTab;
+  categorias: {
+    categoria: string;
+    livros: TEntry[];
+  }[];
+}
+
 export interface LibraryDatasets {
   acervo: AcervoItem[];
   lidos: BookItem[];
   para_ler: BookItem[];
   para_comprar: BookItem[];
+}
+
+export interface BookFormValues {
+  targetTab: LibraryTab;
+  categoria: string;
+  autor: string;
+  livro: string;
+  dataInicio: string;
+  dataFinal: string;
+  tentativas: string;
 }
 
 export interface KpiMetrics {

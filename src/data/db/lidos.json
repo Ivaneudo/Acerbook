@@ -1,0 +1,185 @@
+{
+  "colecao": "lidos",
+  "categorias": [
+    {
+      "categoria": "Literatura Brasileira / Clássicos",
+      "livros": [
+        {
+          "id": 1,
+          "autor": "Clarice Lispector",
+          "livro": "A Hora da Estrela"
+        },
+        {
+          "id": 2,
+          "autor": "Clarice Lispector",
+          "livro": "Uma Aprendizagem ou o Livro dos Prazeres"
+        },
+        {
+          "id": 3,
+          "autor": "Clarice Lispector",
+          "livro": "A paixão segundo G.H"
+        },
+        {
+          "id": 4,
+          "autor": "Clarice Lispector",
+          "livro": "Água Vida"
+        },
+        {
+          "id": 5,
+          "autor": "Graciliano Ramos",
+          "livro": "Vidas Secas"
+        },
+        {
+          "id": 6,
+          "autor": "José Mauro de Vasconcelos",
+          "livro": "O Meu Pé de Laranja Lima"
+        },
+        {
+          "id": 7,
+          "autor": "Machado de Assis",
+          "livro": "Memórias Póstumas de Brás Cubas"
+        }
+      ]
+    },
+    {
+      "categoria": "Romance Contemporâneo & Drama",
+      "livros": [
+        {
+          "id": 8,
+          "autor": "Alice Oseman",
+          "livro": "Heartstopper"
+        },
+        {
+          "id": 9,
+          "autor": "Beth O'Leary",
+          "livro": "Teto para dois"
+        },
+        {
+          "id": 10,
+          "autor": "Beth O'Leary",
+          "livro": "A Troca"
+        },
+        {
+          "id": 11,
+          "autor": "John Green",
+          "livro": "A culpa é das estrelas"
+        },
+        {
+          "id": 12,
+          "autor": "John Green",
+          "livro": "Quem é você, Alasca?"
+        },
+        {
+          "id": 13,
+          "autor": "Victor Martins",
+          "livro": "Quinze dias"
+        }
+      ]
+    },
+    {
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "livros": [
+        {
+          "id": 14,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: MAU COMEÇO"
+        },
+        {
+          "id": 15,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: A SALA DOS RÉPTEIS"
+        },
+        {
+          "id": 16,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: O LADO DAS SANGUESUGAS"
+        },
+        {
+          "id": 17,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: SERARIA BAIXO-ASTRAL"
+        }
+      ]
+    },
+    {
+      "categoria": "Mistério & Suspense (Jovem Adulto)",
+      "livros": [
+        {
+          "id": 18,
+          "autor": "Jennifer Lynn Barnes",
+          "livro": "Jogos de Herança"
+        },
+        {
+          "id": 19,
+          "autor": "Jennifer Lynn Barnes",
+          "livro": "O Herdeiro Perdido"
+        },
+        {
+          "id": 20,
+          "autor": "Jennifer Lynn Barnes",
+          "livro": "A Aposta Final"
+        }
+      ]
+    },
+    {
+      "categoria": "Infantojuvenil / Drama",
+      "livros": [
+        {
+          "id": 21,
+          "autor": "Penélope Martins",
+          "livro": "Minha vida não é cor-de-rosa"
+        }
+      ]
+    },
+    {
+      "categoria": "Poesia & Prosa Poética",
+      "livros": [
+        {
+          "id": 22,
+          "autor": "Amanda Lovelace",
+          "livro": "A princesa salva a si mesma neste livro"
+        },
+        {
+          "id": 23,
+          "autor": "Glaidson Oliveira",
+          "livro": "A Indecência das Borboletas (autografado)"
+        },
+        {
+          "id": 24,
+          "autor": "Igor Pires da Silva",
+          "livro": "Textos Cruéis de Mais para Serem Lidos Rapidamente"
+        },
+        {
+          "id": 25,
+          "autor": "Igor Pires da Silva",
+          "livro": "Textos Cruéis de Mais para Serem Lidos Rapidamente: Onde Dorme o Coração"
+        },
+        {
+          "id": 26,
+          "autor": "Pedro Reis",
+          "livro": "Delírio: Emoções"
+        }
+      ]
+    },
+    {
+      "categoria": "Biografia & Memórias",
+      "livros": [
+        {
+          "id": 27,
+          "autor": "Malala Yousafzai",
+          "livro": "Eu Sou Malala"
+        }
+      ]
+    },
+    {
+      "categoria": "Não Identificados",
+      "livros": [
+        {
+          "id": 28,
+          "autor": "Autor Desconhecido",
+          "livro": "//(livro que eu esqueci o nome)"
+        }
+      ]
+    }
+  ]
+}

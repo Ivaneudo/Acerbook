@@ -1,15 +1,18 @@
 import React from 'react';
-import { BookOpen, CheckCircle2, Clock } from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, Pencil, Trash2 } from 'lucide-react';
+import { useLibrary } from '../../contexts/LibraryContext';
 import { AcervoItem, BookItem, ReadingStatus } from '../../types/book';
 import {
   formatReadingDays,
   getReadingDurationDays,
   getReadingStatus,
-} from '../../utils/csvParser';
+} from '../../utils/libraryUtils';
 import {
+  ActionsCell,
   MonoCell,
   StyledTable,
   TableHead,
+  TableIconButton,
   TableScrollContainer,
   TableStatusBadge,
   Td,
@@ -39,6 +42,8 @@ function formatField(value?: string): string {
 }
 
 export const BookTable: React.FC<BookTableProps> = ({ items, isAcervo }) => {
+  const { activeTab, isReadOnlyProd, openEditModal, deleteBook } = useLibrary();
+
   return (
     <TableScrollContainer>
       <StyledTable>
@@ -56,6 +61,7 @@ export const BookTable: React.FC<BookTableProps> = ({ items, isAcervo }) => {
                 <Th>Tentativas</Th>
               </>
             )}
+            {!isReadOnlyProd && <Th>Ações</Th>}
           </tr>
         </TableHead>
         <tbody>
@@ -101,6 +107,26 @@ export const BookTable: React.FC<BookTableProps> = ({ items, isAcervo }) => {
                       <MonoCell>{formatField(acervo.tentativas)}</MonoCell>
                     </Td>
                   </>
+                )}
+                {!isReadOnlyProd && (
+                  <Td>
+                    <ActionsCell>
+                      <TableIconButton
+                        type="button"
+                        onClick={() => openEditModal(item)}
+                        title="Editar livro"
+                      >
+                        <Pencil size={13} />
+                      </TableIconButton>
+                      <TableIconButton
+                        type="button"
+                        onClick={() => deleteBook(activeTab, item.id)}
+                        title="Remover livro"
+                      >
+                        <Trash2 size={13} />
+                      </TableIconButton>
+                    </ActionsCell>
+                  </Td>
                 )}
               </Tr>
             );

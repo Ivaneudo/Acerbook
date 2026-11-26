@@ -1,0 +1,335 @@
+{
+  "colecao": "para_ler",
+  "categorias": [
+    {
+      "categoria": "Literatura Brasileira / Clássicos",
+      "livros": [
+        {
+          "id": 1,
+          "autor": "Clarice Lispector",
+          "livro": "Todas as Cartas"
+        },
+        {
+          "id": 2,
+          "autor": "Clarice Lispector",
+          "livro": "Perto do Coração Selvagem"
+        },
+        {
+          "id": 3,
+          "autor": "Clarice Lispector",
+          "livro": "A descoberta do mundo"
+        },
+        {
+          "id": 4,
+          "autor": "Clarice Lispector",
+          "livro": "A via crucis do corpo"
+        },
+        {
+          "id": 5,
+          "autor": "Clarice Lispector",
+          "livro": "Felicidade clandestina"
+        },
+        {
+          "id": 6,
+          "autor": "Clarice Lispector",
+          "livro": "Laços de família"
+        },
+        {
+          "id": 7,
+          "autor": "Clarice Lispector",
+          "livro": "O Lustre"
+        },
+        {
+          "id": 8,
+          "autor": "Clarice Lispector",
+          "livro": "A Cidade Sitiada"
+        },
+        {
+          "id": 9,
+          "autor": "Clarice Lispector",
+          "livro": "A Maçã no Escuro"
+        },
+        {
+          "id": 10,
+          "autor": "Clarice Lispector",
+          "livro": "Um Sopro de Vida"
+        },
+        {
+          "id": 11,
+          "autor": "Clarice Lispector",
+          "livro": "Alguns Contos"
+        },
+        {
+          "id": 12,
+          "autor": "Clarice Lispector",
+          "livro": "A Legião Estrangeira"
+        },
+        {
+          "id": 13,
+          "autor": "Clarice Lispector",
+          "livro": "A Imitação da Rosa"
+        },
+        {
+          "id": 14,
+          "autor": "Clarice Lispector",
+          "livro": "Onde Estivestes de Noite"
+        },
+        {
+          "id": 15,
+          "autor": "Clarice Lispector",
+          "livro": "A Bela e a Fera"
+        },
+        {
+          "id": 16,
+          "autor": "Clarice Lispector",
+          "livro": "Todos os Contos"
+        },
+        {
+          "id": 17,
+          "autor": "Clarice Lispector",
+          "livro": "O Mistério do Coelho Pensante"
+        },
+        {
+          "id": 18,
+          "autor": "Clarice Lispector",
+          "livro": "A Mulher que Matou os Peixes"
+        },
+        {
+          "id": 19,
+          "autor": "Clarice Lispector",
+          "livro": "A Vida Íntima de Laura"
+        },
+        {
+          "id": 20,
+          "autor": "Clarice Lispector",
+          "livro": "Quase de Verdade"
+        },
+        {
+          "id": 21,
+          "autor": "Clarice Lispector",
+          "livro": "Como Nasceram as Estrelas"
+        },
+        {
+          "id": 22,
+          "autor": "Clarice Lispector",
+          "livro": "Visão do Esplendor"
+        },
+        {
+          "id": 23,
+          "autor": "Clarice Lispector",
+          "livro": "De Corpo Inteiro"
+        },
+        {
+          "id": 24,
+          "autor": "Clarice Lispector",
+          "livro": "Para Não Esquecer"
+        },
+        {
+          "id": 25,
+          "autor": "Clarice Lispector",
+          "livro": "Correio Feminino"
+        },
+        {
+          "id": 26,
+          "autor": "Clarice Lispector",
+          "livro": "Todas as Crônicas"
+        },
+        {
+          "id": 27,
+          "autor": "Clarice Lispector",
+          "livro": "Cartas Perto do Coração"
+        },
+        {
+          "id": 28,
+          "autor": "Clarice Lispector",
+          "livro": "Correspondências"
+        },
+        {
+          "id": 29,
+          "autor": "Clarice Lispector",
+          "livro": "Minhas Queridas"
+        },
+        {
+          "id": 30,
+          "autor": "Machado de Assis",
+          "livro": "Memórias póstumas de Brás Cubas"
+        }
+      ]
+    },
+    {
+      "categoria": "Clássicos da Literatura Mundial",
+      "livros": [
+        {
+          "id": 31,
+          "autor": "Katherine Mansfield",
+          "livro": "Êxtase e outros contos"
+        },
+        {
+          "id": 32,
+          "autor": "Liev Tolstoi",
+          "livro": "Anna Kariênina"
+        }
+      ]
+    },
+    {
+      "categoria": "Ficção Contemporânea & Drama",
+      "livros": [
+        {
+          "id": 33,
+          "autor": "Carla Madeira",
+          "livro": "Véspera"
+        },
+        {
+          "id": 34,
+          "autor": "Carla Madeira",
+          "livro": "A natureza da mordida"
+        },
+        {
+          "id": 35,
+          "autor": "Carla Madeira",
+          "livro": "Tudo é rio"
+        },
+        {
+          "id": 36,
+          "autor": "Hanya Yanagihara",
+          "livro": "Uma vida pequena"
+        },
+        {
+          "id": 37,
+          "autor": "Jeferson Tenório",
+          "livro": "O avesso da pele"
+        }
+      ]
+    },
+    {
+      "categoria": "Ficção Contemporânea & Realismo Mágico",
+      "livros": [
+        {
+          "id": 38,
+          "autor": "Socorro Acioli",
+          "livro": "A Cabeça do Santo"
+        },
+        {
+          "id": 39,
+          "autor": "Socorro Acioli",
+          "livro": "Oração para Desaparecer"
+        }
+      ]
+    },
+    {
+      "categoria": "Romance Contemporâneo & Drama",
+      "livros": [
+        {
+          "id": 40,
+          "autor": "Nelson Luiz de Carvalho",
+          "livro": "O terceiro travesseiro"
+        }
+      ]
+    },
+    {
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "livros": [
+        {
+          "id": 41,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: INFERNO NO COLÉGIO INTERNO"
+        },
+        {
+          "id": 42,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: O ELEVADOR ERSATZ"
+        },
+        {
+          "id": 43,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: A CIDADE SINISTRA DOS CORVOS"
+        },
+        {
+          "id": 44,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: O HOSPITAL HOSTIL"
+        },
+        {
+          "id": 45,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: O ESPETÁCULO CARNÍVORO"
+        },
+        {
+          "id": 46,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: O ESCORREGADOR DE GELO"
+        },
+        {
+          "id": 47,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: A GRUTA GORGÔNEA"
+        },
+        {
+          "id": 48,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: O PENÚLTIMO PERÍODO"
+        },
+        {
+          "id": 49,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: O FIM"
+        }
+      ]
+    },
+    {
+      "categoria": "Mistério & Suspense (Jovem Adulto)",
+      "livros": [
+        {
+          "id": 50,
+          "autor": "Jennifer Lynn Barnes",
+          "livro": "Os irmãos Hawthorne"
+        }
+      ]
+    },
+    {
+      "categoria": "Terror & Suspense",
+      "livros": [
+        {
+          "id": 51,
+          "autor": "Mark Miller",
+          "livro": "Ninguém vai te ouvir gritar"
+        }
+      ]
+    },
+    {
+      "categoria": "Filosofia, Sociologia & Política",
+      "livros": [
+        {
+          "id": 52,
+          "autor": "Byung-Chul Han",
+          "livro": "Sociedade do cansaço"
+        },
+        {
+          "id": 53,
+          "autor": "Friedrich Nietzsche, Gabriel Valladão Silva",
+          "livro": "Assim Falou Zaratustra"
+        },
+        {
+          "id": 54,
+          "autor": "Gabriela Prioli",
+          "livro": "Ideologias"
+        },
+        {
+          "id": 55,
+          "autor": "Leandro Karnal",
+          "livro": "Preconceito"
+        },
+        {
+          "id": 56,
+          "autor": "Leandro Karnal",
+          "livro": "O dilema do porco espinho"
+        },
+        {
+          "id": 57,
+          "autor": "Platão e Edson Bini",
+          "livro": "Apologia de Sócrates"
+        }
+      ]
+    }
+  ]
+}
