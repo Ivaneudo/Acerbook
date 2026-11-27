@@ -3,6 +3,7 @@ import { AppShell, MainContainer } from './App.styles';
 import { BackgroundAnimation } from './components/BackgroundAnimation/BackgroundAnimation';
 import { BookFormModal } from './components/BookFormModal/BookFormModal';
 import { BookListSection } from './components/BookListSection/BookListSection';
+import { ConfirmDeleteModal } from './components/ConfirmDeleteModal/ConfirmDeleteModal';
 import { DashboardKpis } from './components/DashboardKpis/DashboardKpis';
 import { FilterBar } from './components/FilterBar/FilterBar';
 import { Footer } from './components/Footer/Footer';
@@ -29,6 +30,7 @@ export const App: React.FC = () => {
               <Footer />
             </MainContainer>
             <BookFormModal />
+            <ConfirmDeleteModal />
             <ToastContainer />
           </AppShell>
         </LibraryProvider>

@@ -42,7 +42,7 @@ function formatField(value?: string): string {
 }
 
 export const BookTable: React.FC<BookTableProps> = ({ items, isAcervo }) => {
-  const { activeTab, isReadOnlyProd, openEditModal, deleteBook } = useLibrary();
+  const { activeTab, isReadOnlyProd, openEditModal, requestDeleteBook } = useLibrary();
 
   return (
     <TableScrollContainer>
@@ -120,7 +120,7 @@ export const BookTable: React.FC<BookTableProps> = ({ items, isAcervo }) => {
                       </TableIconButton>
                       <TableIconButton
                         type="button"
-                        onClick={() => deleteBook(activeTab, item.id)}
+                        onClick={() => requestDeleteBook(activeTab, item)}
                         title="Remover livro"
                       >
                         <Trash2 size={13} />

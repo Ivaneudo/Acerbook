@@ -46,7 +46,7 @@ function formatField(value?: string): string {
 }
 
 export const BookCard: React.FC<BookCardProps> = ({ item, isAcervo }) => {
-  const { activeTab, isReadOnlyProd, openEditModal, deleteBook } = useLibrary();
+  const { activeTab, isReadOnlyProd, openEditModal, requestDeleteBook } = useLibrary();
 
   const acervoData = isAcervo && isAcervoRecord(item) ? item : null;
   const status = acervoData ? getReadingStatus(acervoData) : null;
@@ -82,7 +82,7 @@ export const BookCard: React.FC<BookCardProps> = ({ item, isAcervo }) => {
               </CardIconButton>
               <CardIconButton
                 type="button"
-                onClick={() => deleteBook(activeTab, item.id)}
+                onClick={() => requestDeleteBook(activeTab, item)}
                 title="Remover livro"
                 aria-label={`Remover ${item.livro}`}
               >

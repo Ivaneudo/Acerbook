@@ -4,59 +4,131 @@
     {
       "categoria": "Literatura Brasileira / Clássicos",
       "livros": [
-        { "id": 1, "autor": "Clarice Lispector", "livro": "A Hora da Estrela" },
-        { "id": 2, "autor": "Clarice Lispector", "livro": "Uma Aprendizagem ou o Livro dos Prazeres" },
-        { "id": 3, "autor": "José Mauro de Vasconcelos", "livro": "O Meu Pé de Laranja Lima" }
+        {
+          "id": 1,
+          "autor": "Clarice Lispector",
+          "livro": "A Hora da Estrela"
+        },
+        {
+          "id": 3,
+          "autor": "José Mauro de Vasconcelos",
+          "livro": "O Meu Pé de Laranja Lima"
+        },
+        {
+          "id": 19,
+          "autor": "Clarice Lispector",
+          "livro": "Uma Aprendizagem ou o Livro dos Prazeres"
+        }
       ]
     },
     {
       "categoria": "Romance Contemporâneo & Drama",
       "livros": [
-        { "id": 4, "autor": "Beth O'Leary", "livro": "Teto para dois" },
-        { "id": 5, "autor": "Beth O'Leary", "livro": "A Troca" },
-        { "id": 6, "autor": "John Green", "livro": "A culpa é das estrelas" }
+        {
+          "id": 4,
+          "autor": "Beth O'Leary",
+          "livro": "Teto para dois"
+        },
+        {
+          "id": 5,
+          "autor": "Beth O'Leary",
+          "livro": "A Troca"
+        },
+        {
+          "id": 6,
+          "autor": "John Green",
+          "livro": "A culpa é das estrelas"
+        }
       ]
     },
     {
       "categoria": "Aventura & Ficção Infantojuvenil",
       "livros": [
-        { "id": 7, "autor": "Daniel Handler", "livro": "DESVENTURAS EM SÉRIE: MAU COMEÇO" },
-        { "id": 8, "autor": "Daniel Handler", "livro": "DESVENTURAS EM SÉRIE: A SALA DOS RÉPTEIS" },
-        { "id": 9, "autor": "Daniel Handler", "livro": "DESVENTURAS EM SÉRIE: O LADO DAS SANGUESUGAS" },
-        { "id": 10, "autor": "Daniel Handler", "livro": "DESVENTURAS EM SÉRIE: SERARIA BAIXO-ASTRAL" }
+        {
+          "id": 7,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: MAU COMEÇO"
+        },
+        {
+          "id": 8,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: A SALA DOS RÉPTEIS"
+        },
+        {
+          "id": 9,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: O LADO DAS SANGUESUGAS"
+        },
+        {
+          "id": 10,
+          "autor": "Daniel Handler",
+          "livro": "DESVENTURAS EM SÉRIE: SERARIA BAIXO-ASTRAL"
+        }
       ]
     },
     {
       "categoria": "Mistério & Suspense (Jovem Adulto)",
       "livros": [
-        { "id": 11, "autor": "Jennifer Lynn Barnes", "livro": "Jogos de Herança" },
-        { "id": 12, "autor": "Jennifer Lynn Barnes", "livro": "O Herdeiro Perdido" },
-        { "id": 13, "autor": "Jennifer Lynn Barnes", "livro": "A Aposta Final" }
+        {
+          "id": 11,
+          "autor": "Jennifer Lynn Barnes",
+          "livro": "Jogos de Herança"
+        },
+        {
+          "id": 12,
+          "autor": "Jennifer Lynn Barnes",
+          "livro": "O Herdeiro Perdido"
+        },
+        {
+          "id": 13,
+          "autor": "Jennifer Lynn Barnes",
+          "livro": "A Aposta Final"
+        }
       ]
     },
     {
       "categoria": "Infantojuvenil / Drama",
       "livros": [
-        { "id": 14, "autor": "Penélope Martins", "livro": "Minha vida não é cor-de-rosa" }
+        {
+          "id": 14,
+          "autor": "Penélope Martins",
+          "livro": "Minha vida não é cor-de-rosa"
+        }
       ]
     },
     {
       "categoria": "Poesia & Prosa Poética",
       "livros": [
-        { "id": 15, "autor": "Igor Pires da Silva", "livro": "Textos Cruéis de Mais para Serem Lidos Rapidamente" },
-        { "id": 16, "autor": "Igor Pires da Silva", "livro": "Textos Cruéis de Mais para Serem Lidos Rapidamente: Onde Dorme o Coração" }
+        {
+          "id": 15,
+          "autor": "Igor Pires da Silva",
+          "livro": "Textos Cruéis de Mais para Serem Lidos Rapidamente"
+        },
+        {
+          "id": 16,
+          "autor": "Igor Pires da Silva",
+          "livro": "Textos Cruéis de Mais para Serem Lidos Rapidamente: Onde Dorme o Coração"
+        }
       ]
     },
     {
       "categoria": "Biografia & Memórias",
       "livros": [
-        { "id": 17, "autor": "Malala Yousafzai", "livro": "Eu Sou Malala" }
+        {
+          "id": 17,
+          "autor": "Malala Yousafzai",
+          "livro": "Eu Sou Malala"
+        }
       ]
     },
     {
       "categoria": "Não Identificados",
       "livros": [
-        { "id": 18, "autor": "Autor Desconhecido", "livro": "//(livro que eu esqueci o nome)" }
+        {
+          "id": 18,
+          "autor": "Autor Desconhecido",
+          "livro": "//(livro que eu esqueci o nome)"
+        }
       ]
     }
   ]

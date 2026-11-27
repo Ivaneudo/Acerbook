@@ -21,6 +21,8 @@ import {
 } from '../utils/libraryUtils';
 import { useToast } from './ToastContext';
 
+const ALL_TABS: LibraryTab[] = ['acervo', 'lidos', 'para_ler', 'para_comprar'];
+
 const STORAGE_KEYS: Record<LibraryTab, string> = {
   acervo: 'acerbook_db_acervo',
   lidos: 'acerbook_db_lidos',
@@ -89,40 +91,71 @@ async function persistTabToDisk(
   }
 }
 
-function appendToLidosIfNeeded(
-  currentLidos: BookItem[],
-  acervoItem: AcervoItem
-): { nextLidos: BookItem[]; added: boolean } {
-  if (getReadingStatus(acervoItem) !== 'Concluído') {
-    return { nextLidos: currentLidos, added: false };
+function appendIfNotExists(
+  list: BookItem[],
+  book: BookItem
+): { next: BookItem[]; changed: boolean } {
+  if (list.some((item) => isSameBookEntry(item, book))) {
+    return { next: list, changed: false };
   }
-
-  const alreadyInLidos = currentLidos.some((lido) =>
-    isSameBookEntry(lido, acervoItem)
-  );
-  if (alreadyInLidos) {
-    return { nextLidos: currentLidos, added: false };
-  }
-
-  const nextId =
-    currentLidos.length > 0 ? Math.max(...currentLidos.map((i) => i.id)) + 1 : 1;
-
-  const newLidoEntry: BookItem = {
-    id: nextId,
-    categoria: acervoItem.categoria,
-    autor: acervoItem.autor,
-    livro: acervoItem.livro,
-  };
-
+  const nextId = list.length > 0 ? Math.max(...list.map((i) => i.id)) + 1 : 1;
   return {
-    nextLidos: [...currentLidos, newLidoEntry],
-    added: true,
+    next: [
+      ...list,
+      {
+        id: nextId,
+        categoria: book.categoria,
+        autor: book.autor,
+        livro: book.livro,
+      },
+    ],
+    changed: true,
   };
+}
+
+function removeIfExists<T extends BookItem>(
+  list: T[],
+  book: BookItem
+): { next: T[]; changed: boolean } {
+  const next = list.filter((item) => !isSameBookEntry(item, book));
+  return { next, changed: next.length !== list.length };
+}
+
+function propagateMetadataChange<T extends BookItem>(
+  list: T[],
+  previousBook: BookItem,
+  updatedFields: Pick<BookItem, 'categoria' | 'autor' | 'livro'>
+): { next: T[]; changed: boolean } {
+  let changed = false;
+  const next = list.map((item) => {
+    if (!isSameBookEntry(item, previousBook)) return item;
+    if (
+      item.categoria === updatedFields.categoria &&
+      item.autor === updatedFields.autor &&
+      item.livro === updatedFields.livro
+    ) {
+      return item;
+    }
+    changed = true;
+    return {
+      ...item,
+      categoria: updatedFields.categoria,
+      autor: updatedFields.autor,
+      livro: updatedFields.livro,
+    };
+  });
+  return { next, changed };
 }
 
 export interface EditingBookTarget {
   tab: LibraryTab;
   item: BookItem | AcervoItem;
+}
+
+export interface PendingDeleteTarget {
+  tab: LibraryTab;
+  item: BookItem | AcervoItem;
+  alsoInTabs: LibraryTab[];
 }
 
 interface LibraryContextValue {
@@ -150,6 +183,7 @@ interface LibraryContextValue {
   isFormModalOpen: boolean;
   isReadOnlyProd: boolean;
   editingTarget: EditingBookTarget | null;
+  pendingDelete: PendingDeleteTarget | null;
   openAddModal: () => void;
   openEditModal: (item: BookItem | AcervoItem) => void;
   closeFormModal: () => void;
@@ -159,7 +193,9 @@ interface LibraryContextValue {
     originalTab: LibraryTab,
     values: BookFormValues
   ) => Promise<void>;
-  deleteBook: (tab: LibraryTab, id: number) => Promise<void>;
+  requestDeleteBook: (tab: LibraryTab, item: BookItem | AcervoItem) => void;
+  cancelDeleteBook: () => void;
+  confirmDeleteBook: (removeFromAllTabs: boolean) => Promise<void>;
   exportJsonForTab: (tab: LibraryTab) => void;
   resetTabToDefault: (tab: LibraryTab) => void;
   resetAllToDefault: () => void;
@@ -178,6 +214,7 @@ export const LibraryProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [selectedAuthor, setSelectedAuthor] = useState('Todos');
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [editingTarget, setEditingTarget] = useState<EditingBookTarget | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<PendingDeleteTarget | null>(null);
 
   const setActiveTab = useCallback((tab: LibraryTab) => {
     setActiveTabState(tab);
@@ -283,317 +320,379 @@ export const LibraryProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setEditingTarget(null);
   }, []);
 
+  const persistModifiedTabs = useCallback(
+    async (
+      nextDatasets: LibraryDatasets,
+      dirtyTabs: LibraryTab[],
+      successTitle: string,
+      successMessage: string
+    ) => {
+      const results = await Promise.all(
+        dirtyTabs.map(async (tab) => ({
+          tab,
+          res: await persistTabToDisk(tab, nextDatasets[tab]),
+        }))
+      );
+
+      const failed = results.filter((entry) => !entry.res.ok);
+      if (failed.length === 0) {
+        showToast({
+          variant: 'success',
+          title: successTitle,
+          message: successMessage,
+        });
+      } else {
+        failed.forEach(({ tab }) => {
+          window.localStorage.setItem(
+            STORAGE_KEYS[tab],
+            JSON.stringify(nextDatasets[tab])
+          );
+        });
+        showToast({
+          variant: 'error',
+          title: 'Erro ao gravar arquivo JSON',
+          message: `${failed[0].res.error ?? 'Erro desconhecido.'} Alterações mantidas no navegador.`,
+        });
+      }
+    },
+    [showToast]
+  );
+
   const addBook = useCallback(
     async (values: BookFormValues) => {
       if (IS_READONLY_PROD) return;
 
-      const targetList = datasets[values.targetTab];
+      const nextDatasets: LibraryDatasets = { ...datasets };
+      const dirtyTabs = new Set<LibraryTab>([values.targetTab]);
+
+      const targetList = nextDatasets[values.targetTab];
       const nextId =
         targetList.length > 0 ? Math.max(...targetList.map((i) => i.id)) + 1 : 1;
 
-      if (values.targetTab === 'acervo') {
-        const newAcervoItem: AcervoItem = {
-          id: nextId,
-          categoria: values.categoria.trim(),
-          autor: values.autor.trim(),
-          livro: values.livro.trim(),
-          dataInicio: values.dataInicio.trim(),
-          dataFinal: values.dataFinal.trim(),
-          tentativas: values.tentativas.trim(),
-        };
-
-        const updatedAcervo = [...datasets.acervo, newAcervoItem];
-        const { nextLidos, added: syncedToLidos } = appendToLidosIfNeeded(
-          datasets.lidos,
-          newAcervoItem
-        );
-
-        setDatasets((prev) => ({
-          ...prev,
-          acervo: updatedAcervo,
-          lidos: nextLidos,
-        }));
-
-        const tasks = [persistTabToDisk('acervo', updatedAcervo)];
-        if (syncedToLidos) {
-          tasks.push(persistTabToDisk('lidos', nextLidos));
-        }
-        const results = await Promise.all(tasks);
-        const allOk = results.every((r) => r.ok);
-
-        if (allOk) {
-          showToast({
-            variant: 'success',
-            title: syncedToLidos
-              ? 'Salvo no Acervo e em Livros Lidos!'
-              : 'Livro adicionado!',
-            message: syncedToLidos
-              ? `"${newAcervoItem.livro}" foi salvo em acervo.json e adicionado automaticamente em lidos.json.`
-              : `"${newAcervoItem.livro}" foi salvo em src/data/db/acervo.json.`,
-          });
-        } else {
-          window.localStorage.setItem(STORAGE_KEYS.acervo, JSON.stringify(updatedAcervo));
-          if (syncedToLidos) {
-            window.localStorage.setItem(STORAGE_KEYS.lidos, JSON.stringify(nextLidos));
-          }
-          const firstErr = results.find((r) => !r.ok)?.error;
-          showToast({
-            variant: 'error',
-            title: 'Erro ao gravar arquivo JSON',
-            message: `${firstErr ?? 'Erro desconhecido.'} Alteração salva apenas no navegador.`,
-          });
-        }
-        return;
-      }
-
-      const newItem: BookItem = {
-        id: nextId,
+      const baseFields = {
         categoria: values.categoria.trim(),
         autor: values.autor.trim(),
         livro: values.livro.trim(),
       };
 
-      const updatedList = [...targetList, newItem];
-      setDatasets((prev) => ({ ...prev, [values.targetTab]: updatedList }));
+      if (values.targetTab === 'acervo') {
+        const newAcervoItem: AcervoItem = {
+          id: nextId,
+          ...baseFields,
+          dataInicio: values.dataInicio.trim(),
+          dataFinal: values.dataFinal.trim(),
+          tentativas: values.tentativas.trim(),
+        };
 
-      const result = await persistTabToDisk(values.targetTab, updatedList);
-      if (result.ok) {
-        showToast({
-          variant: 'success',
-          title: 'Livro adicionado!',
-          message: `"${newItem.livro}" foi salvo em src/data/db/${values.targetTab}.json.`,
-        });
+        nextDatasets.acervo = [...nextDatasets.acervo, newAcervoItem];
+
+        const buySync = removeIfExists(nextDatasets.para_comprar, newAcervoItem);
+        if (buySync.changed) {
+          nextDatasets.para_comprar = buySync.next;
+          dirtyTabs.add('para_comprar');
+        }
+
+        if (getReadingStatus(newAcervoItem) === 'Concluído') {
+          const lidosSync = appendIfNotExists(nextDatasets.lidos, newAcervoItem);
+          if (lidosSync.changed) {
+            nextDatasets.lidos = lidosSync.next;
+            dirtyTabs.add('lidos');
+          }
+          const paraLerSync = removeIfExists(nextDatasets.para_ler, newAcervoItem);
+          if (paraLerSync.changed) {
+            nextDatasets.para_ler = paraLerSync.next;
+            dirtyTabs.add('para_ler');
+          }
+        }
       } else {
-        window.localStorage.setItem(
-          STORAGE_KEYS[values.targetTab],
-          JSON.stringify(updatedList)
-        );
-        showToast({
-          variant: 'error',
-          title: 'Erro ao gravar arquivo JSON',
-          message: `${result.error} Alteração salva apenas no navegador.`,
-        });
+        const newItem: BookItem = {
+          id: nextId,
+          ...baseFields,
+        };
+        nextDatasets[values.targetTab] = [...targetList, newItem];
+
+        if (values.targetTab === 'lidos') {
+          const paraLerSync = removeIfExists(nextDatasets.para_ler, newItem);
+          if (paraLerSync.changed) {
+            nextDatasets.para_ler = paraLerSync.next;
+            dirtyTabs.add('para_ler');
+          }
+        }
       }
+
+      setDatasets(nextDatasets);
+
+      const dirtyList = Array.from(dirtyTabs);
+      const filesText = dirtyList.map((t) => `${t}.json`).join(', ');
+      await persistModifiedTabs(
+        nextDatasets,
+        dirtyList,
+        dirtyList.length > 1 ? 'Salvo e sincronizado!' : 'Livro adicionado!',
+        `"${baseFields.livro}" salvo em ${filesText}.`
+      );
     },
-    [datasets, showToast]
+    [datasets, persistModifiedTabs]
   );
 
   const updateBook = useCallback(
     async (originalId: number, originalTab: LibraryTab, values: BookFormValues) => {
       if (IS_READONLY_PROD) return;
 
+      const previousItem = datasets[originalTab].find((i) => i.id === originalId);
+      if (!previousItem) return;
+
+      const nextDatasets: LibraryDatasets = { ...datasets };
+      const dirtyTabs = new Set<LibraryTab>([values.targetTab]);
+
+      const updatedFields = {
+        categoria: values.categoria.trim(),
+        autor: values.autor.trim(),
+        livro: values.livro.trim(),
+      };
+
+      const prevAcervoStatus =
+        originalTab === 'acervo'
+          ? getReadingStatus(previousItem as AcervoItem)
+          : null;
+
       if (originalTab === values.targetTab) {
         if (originalTab === 'acervo') {
-          let updatedItemSnapshot: AcervoItem | null = null;
-          const updatedAcervo = datasets.acervo.map((item) => {
-            if (item.id !== originalId) return item;
-            updatedItemSnapshot = {
-              ...item,
-              categoria: values.categoria.trim(),
-              autor: values.autor.trim(),
-              livro: values.livro.trim(),
-              dataInicio: values.dataInicio.trim(),
-              dataFinal: values.dataFinal.trim(),
-              tentativas: values.tentativas.trim(),
-            };
-            return updatedItemSnapshot;
-          });
+          const updatedAcervoItem: AcervoItem = {
+            ...(previousItem as AcervoItem),
+            ...updatedFields,
+            dataInicio: values.dataInicio.trim(),
+            dataFinal: values.dataFinal.trim(),
+            tentativas: values.tentativas.trim(),
+          };
 
-          const { nextLidos, added: syncedToLidos } = updatedItemSnapshot
-            ? appendToLidosIfNeeded(datasets.lidos, updatedItemSnapshot)
-            : { nextLidos: datasets.lidos, added: false };
-
-          setDatasets((prev) => ({
-            ...prev,
-            acervo: updatedAcervo,
-            lidos: nextLidos,
-          }));
-
-          const tasks = [persistTabToDisk('acervo', updatedAcervo)];
-          if (syncedToLidos) {
-            tasks.push(persistTabToDisk('lidos', nextLidos));
-          }
-          const results = await Promise.all(tasks);
-          const allOk = results.every((r) => r.ok);
-
-          if (allOk) {
-            showToast({
-              variant: 'success',
-              title: syncedToLidos
-                ? 'Atualizado e sincronizado com Livros Lidos!'
-                : 'Alterações salvas!',
-              message: syncedToLidos
-                ? `"${values.livro.trim()}" foi atualizado em acervo.json e adicionado automaticamente em lidos.json.`
-                : `"${values.livro.trim()}" foi atualizado em src/data/db/acervo.json.`,
-            });
-          } else {
-            window.localStorage.setItem(
-              STORAGE_KEYS.acervo,
-              JSON.stringify(updatedAcervo)
-            );
-            if (syncedToLidos) {
-              window.localStorage.setItem(STORAGE_KEYS.lidos, JSON.stringify(nextLidos));
-            }
-            const firstErr = results.find((r) => !r.ok)?.error;
-            showToast({
-              variant: 'error',
-              title: 'Erro ao atualizar arquivo JSON',
-              message: `${firstErr ?? 'Erro desconhecido.'} Alteração salva apenas no navegador.`,
-            });
-          }
-          return;
-        }
-
-        const updatedList = datasets[originalTab].map((item) =>
-          item.id === originalId
-            ? {
-                ...item,
-                categoria: values.categoria.trim(),
-                autor: values.autor.trim(),
-                livro: values.livro.trim(),
-              }
-            : item
-        );
-
-        setDatasets((prev) => ({ ...prev, [originalTab]: updatedList }));
-
-        const result = await persistTabToDisk(originalTab, updatedList);
-        if (result.ok) {
-          showToast({
-            variant: 'success',
-            title: 'Alterações salvas!',
-            message: `"${values.livro.trim()}" foi atualizado em src/data/db/${originalTab}.json.`,
-          });
-        } else {
-          window.localStorage.setItem(
-            STORAGE_KEYS[originalTab],
-            JSON.stringify(updatedList)
+          nextDatasets.acervo = nextDatasets.acervo.map((item) =>
+            item.id === originalId ? updatedAcervoItem : item
           );
-          showToast({
-            variant: 'error',
-            title: 'Erro ao atualizar arquivo JSON',
-            message: `${result.error} Alteração salva apenas no navegador.`,
-          });
-        }
-        return;
-      }
 
-      // Movendo livro entre coleções
-      const filteredOrigin = datasets[originalTab].filter(
-        (item) => item.id !== originalId
-      );
-      const targetList = datasets[values.targetTab];
-      const nextId =
-        targetList.length > 0 ? Math.max(...targetList.map((i) => i.id)) + 1 : 1;
-
-      const movedItem: BookItem | AcervoItem =
-        values.targetTab === 'acervo'
-          ? {
-              id: nextId,
-              categoria: values.categoria.trim(),
-              autor: values.autor.trim(),
-              livro: values.livro.trim(),
-              dataInicio: values.dataInicio.trim(),
-              dataFinal: values.dataFinal.trim(),
-              tentativas: values.tentativas.trim(),
+          (['lidos', 'para_ler', 'para_comprar'] as const).forEach((otherTab) => {
+            const prop = propagateMetadataChange(
+              nextDatasets[otherTab],
+              previousItem,
+              updatedFields
+            );
+            if (prop.changed) {
+              nextDatasets[otherTab] = prop.next;
+              dirtyTabs.add(otherTab);
             }
-          : {
-              id: nextId,
-              categoria: values.categoria.trim(),
-              autor: values.autor.trim(),
-              livro: values.livro.trim(),
-            };
+          });
 
-      const updatedTarget = [...targetList, movedItem];
+          const nextStatus = getReadingStatus(updatedAcervoItem);
 
-      let nextLidos = datasets.lidos;
-      let syncedToLidos = false;
-      if (values.targetTab === 'acervo') {
-        const syncRes = appendToLidosIfNeeded(
-          originalTab === 'lidos' ? filteredOrigin : datasets.lidos,
-          movedItem as AcervoItem
-        );
-        nextLidos = syncRes.nextLidos;
-        syncedToLidos = syncRes.added;
-      }
+          const buySync = removeIfExists(nextDatasets.para_comprar, updatedAcervoItem);
+          if (buySync.changed) {
+            nextDatasets.para_comprar = buySync.next;
+            dirtyTabs.add('para_comprar');
+          }
 
-      setDatasets((prev) => ({
-        ...prev,
-        [originalTab]: filteredOrigin,
-        [values.targetTab]: updatedTarget,
-        ...(syncedToLidos ? { lidos: nextLidos } : {}),
-      }));
+          if (nextStatus === 'Concluído') {
+            const lidosSync = appendIfNotExists(nextDatasets.lidos, updatedAcervoItem);
+            if (lidosSync.changed) {
+              nextDatasets.lidos = lidosSync.next;
+              dirtyTabs.add('lidos');
+            }
+            const paraLerSync = removeIfExists(nextDatasets.para_ler, updatedAcervoItem);
+            if (paraLerSync.changed) {
+              nextDatasets.para_ler = paraLerSync.next;
+              dirtyTabs.add('para_ler');
+            }
+          } else if (prevAcervoStatus === 'Concluído' && nextStatus !== 'Concluído') {
+            const lidosRem = removeIfExists(nextDatasets.lidos, updatedAcervoItem);
+            if (lidosRem.changed) {
+              nextDatasets.lidos = lidosRem.next;
+              dirtyTabs.add('lidos');
+            }
+          }
+        } else {
+          const updatedItem: BookItem = {
+            ...previousItem,
+            ...updatedFields,
+          };
+          nextDatasets[originalTab] = nextDatasets[originalTab].map((item) =>
+            item.id === originalId ? updatedItem : item
+          );
 
-      const persistTasks = [
-        persistTabToDisk(originalTab, filteredOrigin),
-        persistTabToDisk(values.targetTab, updatedTarget),
-      ];
-      if (syncedToLidos) {
-        persistTasks.push(persistTabToDisk('lidos', nextLidos));
-      }
+          ALL_TABS.filter((t) => t !== originalTab).forEach((otherTab) => {
+            if (otherTab === 'acervo') {
+              const prop = propagateMetadataChange(
+                nextDatasets.acervo,
+                previousItem,
+                updatedFields
+              );
+              if (prop.changed) {
+                nextDatasets.acervo = prop.next;
+                dirtyTabs.add('acervo');
+              }
+            } else {
+              const prop = propagateMetadataChange(
+                nextDatasets[otherTab],
+                previousItem,
+                updatedFields
+              );
+              if (prop.changed) {
+                nextDatasets[otherTab] = prop.next;
+                dirtyTabs.add(otherTab);
+              }
+            }
+          });
 
-      const results = await Promise.all(persistTasks);
-      const allOk = results.every((r) => r.ok);
-
-      if (allOk) {
-        showToast({
-          variant: 'success',
-          title: syncedToLidos
-            ? 'Livro movido e adicionado em Livros Lidos!'
-            : 'Livro movido e salvo!',
-          message: syncedToLidos
-            ? `"${movedItem.livro}" movido para acervo.json e sincronizado em lidos.json.`
-            : `"${movedItem.livro}" movido para src/data/db/${values.targetTab}.json.`,
-        });
-      } else {
-        window.localStorage.setItem(
-          STORAGE_KEYS[originalTab],
-          JSON.stringify(filteredOrigin)
-        );
-        window.localStorage.setItem(
-          STORAGE_KEYS[values.targetTab],
-          JSON.stringify(updatedTarget)
-        );
-        if (syncedToLidos) {
-          window.localStorage.setItem(STORAGE_KEYS.lidos, JSON.stringify(nextLidos));
+          if (originalTab === 'lidos') {
+            const paraLerSync = removeIfExists(nextDatasets.para_ler, updatedItem);
+            if (paraLerSync.changed) {
+              nextDatasets.para_ler = paraLerSync.next;
+              dirtyTabs.add('para_ler');
+            }
+          }
         }
-        const firstErr = results.find((r) => !r.ok)?.error;
-        showToast({
-          variant: 'error',
-          title: 'Erro ao atualizar arquivos JSON',
-          message: `${firstErr ?? 'Erro desconhecido.'} Alterações mantidas apenas no navegador.`,
-        });
+      } else {
+        dirtyTabs.add(originalTab);
+
+        if (originalTab === 'acervo') {
+          nextDatasets.acervo = nextDatasets.acervo.filter(
+            (item) => item.id !== originalId
+          );
+
+          if (prevAcervoStatus === 'Concluído' && values.targetTab !== 'lidos') {
+            const lidosRem = removeIfExists(nextDatasets.lidos, previousItem);
+            if (lidosRem.changed) {
+              nextDatasets.lidos = lidosRem.next;
+              dirtyTabs.add('lidos');
+            }
+          }
+        } else {
+          nextDatasets[originalTab] = nextDatasets[originalTab].filter(
+            (item) => item.id !== originalId
+          );
+        }
+
+        const targetList = nextDatasets[values.targetTab];
+        const nextId =
+          targetList.length > 0 ? Math.max(...targetList.map((i) => i.id)) + 1 : 1;
+
+        if (values.targetTab === 'acervo') {
+          const movedAcervo: AcervoItem = {
+            id: nextId,
+            ...updatedFields,
+            dataInicio: values.dataInicio.trim(),
+            dataFinal: values.dataFinal.trim(),
+            tentativas: values.tentativas.trim(),
+          };
+          nextDatasets.acervo = [...nextDatasets.acervo, movedAcervo];
+
+          const buySync = removeIfExists(nextDatasets.para_comprar, movedAcervo);
+          if (buySync.changed) {
+            nextDatasets.para_comprar = buySync.next;
+            dirtyTabs.add('para_comprar');
+          }
+
+          if (getReadingStatus(movedAcervo) === 'Concluído') {
+            const lidosSync = appendIfNotExists(nextDatasets.lidos, movedAcervo);
+            if (lidosSync.changed) {
+              nextDatasets.lidos = lidosSync.next;
+              dirtyTabs.add('lidos');
+            }
+            const paraLerSync = removeIfExists(nextDatasets.para_ler, movedAcervo);
+            if (paraLerSync.changed) {
+              nextDatasets.para_ler = paraLerSync.next;
+              dirtyTabs.add('para_ler');
+            }
+          }
+        } else {
+          const movedBook: BookItem = {
+            id: nextId,
+            ...updatedFields,
+          };
+          nextDatasets[values.targetTab] = [...targetList, movedBook];
+
+          if (values.targetTab === 'lidos') {
+            const paraLerSync = removeIfExists(nextDatasets.para_ler, movedBook);
+            if (paraLerSync.changed) {
+              nextDatasets.para_ler = paraLerSync.next;
+              dirtyTabs.add('para_ler');
+            }
+          }
+        }
       }
+
+      setDatasets(nextDatasets);
+
+      const dirtyList = Array.from(dirtyTabs);
+      const filesText = dirtyList.map((t) => `${t}.json`).join(', ');
+      await persistModifiedTabs(
+        nextDatasets,
+        dirtyList,
+        dirtyList.length > 1 ? 'Atualizado e sincronizado!' : 'Alterações salvas!',
+        `"${updatedFields.livro}" atualizado em ${filesText}.`
+      );
     },
-    [datasets, showToast]
+    [datasets, persistModifiedTabs]
   );
 
-  const deleteBook = useCallback(
-    async (tab: LibraryTab, id: number) => {
+  const requestDeleteBook = useCallback(
+    (tab: LibraryTab, item: BookItem | AcervoItem) => {
       if (IS_READONLY_PROD) return;
 
-      const removed = datasets[tab].find((item) => item.id === id);
-      const updatedList = datasets[tab].filter((item) => item.id !== id);
+      const alsoInTabs = ALL_TABS.filter(
+        (otherTab) =>
+          otherTab !== tab &&
+          datasets[otherTab].some((entry) => isSameBookEntry(entry, item))
+      );
 
-      setDatasets((prev) => ({ ...prev, [tab]: updatedList }));
-
-      const result = await persistTabToDisk(tab, updatedList);
-      if (result.ok) {
-        showToast({
-          variant: 'success',
-          title: 'Livro removido!',
-          message: `"${removed?.livro ?? 'Item'}" removido de src/data/db/${tab}.json.`,
-        });
-      } else {
-        window.localStorage.setItem(STORAGE_KEYS[tab], JSON.stringify(updatedList));
-        showToast({
-          variant: 'error',
-          title: 'Erro ao gravar remoção no JSON',
-          message: `${result.error} Alteração salva apenas no navegador.`,
-        });
-      }
+      setPendingDelete({ tab, item, alsoInTabs });
     },
-    [datasets, showToast]
+    [datasets]
+  );
+
+  const cancelDeleteBook = useCallback(() => {
+    setPendingDelete(null);
+  }, []);
+
+  const confirmDeleteBook = useCallback(
+    async (removeFromAllTabs: boolean) => {
+      if (IS_READONLY_PROD || !pendingDelete) return;
+
+      const { tab, item, alsoInTabs } = pendingDelete;
+      const tabsToRemove = removeFromAllTabs ? [tab, ...alsoInTabs] : [tab];
+      const nextDatasets: LibraryDatasets = { ...datasets };
+
+      tabsToRemove.forEach((target) => {
+        if (target === tab) {
+          if (target === 'acervo') {
+            nextDatasets.acervo = nextDatasets.acervo.filter(
+              (entry) => entry.id !== item.id
+            );
+          } else {
+            nextDatasets[target] = nextDatasets[target].filter(
+              (entry) => entry.id !== item.id
+            );
+          }
+        } else if (target === 'acervo') {
+          nextDatasets.acervo = nextDatasets.acervo.filter(
+            (entry) => !isSameBookEntry(entry, item)
+          );
+        } else {
+          nextDatasets[target] = nextDatasets[target].filter(
+            (entry) => !isSameBookEntry(entry, item)
+          );
+        }
+      });
+
+      setDatasets(nextDatasets);
+      setPendingDelete(null);
+
+      const filesText = tabsToRemove.map((t) => `${t}.json`).join(', ');
+      await persistModifiedTabs(
+        nextDatasets,
+        tabsToRemove,
+        'Livro removido!',
+        `"${item.livro}" removido de ${filesText}.`
+      );
+    },
+    [datasets, pendingDelete, persistModifiedTabs]
   );
 
   const exportJsonForTab = useCallback(
@@ -631,7 +730,7 @@ export const LibraryProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const resetAllToDefault = useCallback(() => {
     if (IS_READONLY_PROD) return;
 
-    (Object.keys(STORAGE_KEYS) as LibraryTab[]).forEach((tab) => {
+    ALL_TABS.forEach((tab) => {
       window.localStorage.removeItem(STORAGE_KEYS[tab]);
     });
     setDatasets(getDefaultDatasets());
@@ -669,12 +768,15 @@ export const LibraryProvider: React.FC<{ children: React.ReactNode }> = ({ child
         isFormModalOpen,
         isReadOnlyProd: IS_READONLY_PROD,
         editingTarget,
+        pendingDelete,
         openAddModal,
         openEditModal,
         closeFormModal,
         addBook,
         updateBook,
-        deleteBook,
+        requestDeleteBook,
+        cancelDeleteBook,
+        confirmDeleteBook,
         exportJsonForTab,
         resetTabToDefault,
         resetAllToDefault,
