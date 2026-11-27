@@ -500,7 +500,7 @@ export const LibraryProvider: React.FC<{ children: React.ReactNode }> = ({ child
               nextDatasets.para_ler = paraLerSync.next;
               dirtyTabs.add('para_ler');
             }
-          } else if (prevAcervoStatus === 'Concluído' && nextStatus !== 'Concluído') {
+          } else if (prevAcervoStatus === 'Concluído') {
             const lidosRem = removeIfExists(nextDatasets.lidos, updatedAcervoItem);
             if (lidosRem.changed) {
               nextDatasets.lidos = lidosRem.next;
