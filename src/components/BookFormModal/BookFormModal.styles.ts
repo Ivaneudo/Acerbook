@@ -14,7 +14,7 @@ export const ModalOverlay = styled.div`
 
 export const ModalDialog = styled.div`
   width: 100%;
-  max-width: 580px;
+  max-width: 600px;
   background: ${({ theme }) => theme.colors.backgroundSecondary};
   border: 1px solid ${({ theme }) => theme.colors.surfaceBorder};
   border-radius: 16px;
@@ -210,10 +210,26 @@ export const RepoLinkButton = styled.a`
   }
 `;
 
+export const BookForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+`;
+
+export const FormRow = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    grid-template-columns: 1fr;
+  }
+`;
+
 export const FieldGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 `;
 
 export const FieldLabel = styled.label`
@@ -223,9 +239,31 @@ export const FieldLabel = styled.label`
   color: ${({ theme }) => theme.colors.text};
 `;
 
-export const TargetSelect = styled.select`
+export const FieldInput = styled.input`
   width: 100%;
-  height: 42px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: ${({ theme }) => theme.colors.codeBg};
+  border: 1px solid ${({ theme }) => theme.colors.surfaceBorder};
+  font-size: 13px;
+  color: ${({ theme }) => theme.colors.text};
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.textMuted};
+  }
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primaryGlow};
+  }
+`;
+
+export const FieldSelect = styled.select`
+  width: 100%;
+  height: 40px;
   padding: 0 12px;
   border-radius: 10px;
   background: ${({ theme }) => theme.colors.codeBg};
@@ -244,40 +282,30 @@ export const TargetSelect = styled.select`
   }
 `;
 
-export const UploadBox = styled.label`
-  border: 2px dashed ${({ theme }) => theme.colors.surfaceBorder};
-  border-radius: 12px;
-  padding: 24px 16px;
+export const AcervoSectionBox = styled.div`
   background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.surfaceBorder};
+  border-radius: 12px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  text-align: center;
-  cursor: pointer;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  gap: 12px;
+`;
 
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
-    background: ${({ theme }) => theme.colors.surfaceHover};
-  }
+export const CheckboxRow = styled.label`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: ${({ theme }) => theme.colors.textMuted};
+  cursor: pointer;
 
   input {
-    display: none;
+    accent-color: ${({ theme }) => theme.colors.primary};
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
   }
-`;
-
-export const UploadTitle = styled.span`
-  font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 13px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.text};
-`;
-
-export const UploadHint = styled.span`
-  font-size: 12px;
-  color: ${({ theme }) => theme.colors.textMuted};
 `;
 
 interface FeedbackBannerProps {
@@ -357,5 +385,20 @@ export const PrimaryButton = styled.button`
 
   &:hover {
     background: ${({ theme }) => theme.colors.primaryHover};
+  }
+`;
+
+export const SyncHintText = styled.span`
+  font-size: 11.5px;
+  color: ${({ theme }) => theme.colors.textMuted};
+  line-height: 1.45;
+
+  code {
+    font-family: ${({ theme }) => theme.fonts.display};
+    font-size: 11px;
+    color: ${({ theme }) => theme.colors.text};
+    background: ${({ theme }) => theme.colors.codeBg};
+    padding: 1px 5px;
+    border-radius: 4px;
   }
 `;

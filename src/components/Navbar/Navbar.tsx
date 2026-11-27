@@ -7,9 +7,9 @@ import {
   Lock,
   Menu,
   Moon,
+  Plus,
   ShoppingBag,
   Sun,
-  Upload,
   X,
 } from 'lucide-react';
 import { useLibrary } from '../../contexts/LibraryContext';
@@ -49,9 +49,9 @@ export const Navbar: React.FC = () => {
     activeTab,
     setActiveTab,
     datasets,
-    openCsvModal,
-    exportCsvForTab,
-    isImportDisabled,
+    openAddModal,
+    exportJsonForTab,
+    isReadOnlyProd,
   } = useLibrary();
   const { isDark, toggleTheme } = useThemeMode();
 
@@ -116,23 +116,23 @@ export const Navbar: React.FC = () => {
 
           <ActionsGroup>
             <ActionButton
-              isLocked={isImportDisabled}
-              onClick={openCsvModal}
+              isLocked={isReadOnlyProd}
+              onClick={openAddModal}
               title={
-                isImportDisabled
-                  ? 'Customização desativada em produção (clique para saber mais)'
-                  : 'Importar ou restaurar CSV'
+                isReadOnlyProd
+                  ? 'Cadastro desativado em produção (clique para saber mais)'
+                  : 'Adicionar novo livro via formulário'
               }
             >
-              {isImportDisabled ? <Lock size={14} /> : <Upload size={14} />}
-              Importar CSV
+              {isReadOnlyProd ? <Lock size={14} /> : <Plus size={14} />}
+              Adicionar Livro
             </ActionButton>
             <ActionButton
-              onClick={() => exportCsvForTab(activeTab)}
-              title="Exportar lista atual em CSV"
+              onClick={() => exportJsonForTab(activeTab)}
+              title="Exportar lista atual em JSON"
             >
               <Download size={14} />
-              Exportar CSV
+              Exportar JSON
             </ActionButton>
 
             <IconOnlyButton
@@ -171,23 +171,23 @@ export const Navbar: React.FC = () => {
 
         <MobileDrawerActions>
           <MobileActionButton
-            isLocked={isImportDisabled}
+            isLocked={isReadOnlyProd}
             onClick={() => {
               setIsMobileOpen(false);
-              openCsvModal();
+              openAddModal();
             }}
           >
-            {isImportDisabled ? <Lock size={14} /> : <Upload size={14} />}
-            Importar CSV
+            {isReadOnlyProd ? <Lock size={14} /> : <Plus size={14} />}
+            Adicionar Livro
           </MobileActionButton>
           <MobileActionButton
             onClick={() => {
               setIsMobileOpen(false);
-              exportCsvForTab(activeTab);
+              exportJsonForTab(activeTab);
             }}
           >
             <Download size={14} />
-            Exportar CSV
+            Exportar JSON
           </MobileActionButton>
         </MobileDrawerActions>
       </MobileDrawer>

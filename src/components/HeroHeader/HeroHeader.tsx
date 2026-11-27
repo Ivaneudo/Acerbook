@@ -12,25 +12,25 @@ import {
 
 const TAB_DESCRIPTIONS: Record<LibraryTab, { badge: string; title: string; subtitle: string }> = {
   acervo: {
-    badge: 'acervo.csv',
+    badge: 'acervo.json',
     title: 'Meu Acervo Pessoal',
     subtitle:
-      'Livros físicos e digitais já catalogados em casa, com datas de início, conclusão, tentativas e status de leitura.',
+      'Livros físicos e digitais já catalogados em casa, com datas de início, conclusão, tempo de leitura e tentativas.',
   },
   lidos: {
-    badge: 'lidos.csv',
+    badge: 'lidos.json',
     title: 'Histórico de Livros Lidos',
     subtitle:
       'Registro completo das obras concluídas até aqui, organizadas por categoria literária e agrupadas por autor.',
   },
   para_ler: {
-    badge: 'para_ler.csv',
+    badge: 'para_ler.json',
     title: 'Wishlist & Fila de Leitura',
     subtitle:
       'Próximas leituras planejadas — de clássicos brasileiros e filosofia até séries de aventura e ficção contemporânea.',
   },
   para_comprar: {
-    badge: 'para_comprar.csv',
+    badge: 'para_comprar.json',
     title: 'Lista de Compras para o Acervo',
     subtitle:
       'Obras que já foram lidas, mas ainda faltam na estante física para completar a coleção pessoal.',
@@ -45,7 +45,7 @@ export const HeroHeader: React.FC = () => {
     <HeroSection>
       <EyebrowTag>
         <Terminal size={13} />
-        acerbook / {info.badge}
+        acerbook / db / {info.badge}
       </EyebrowTag>
       <HeroTitle>
         {info.title.split(' ').slice(0, -1).join(' ')}{' '}

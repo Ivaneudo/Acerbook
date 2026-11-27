@@ -2,8 +2,12 @@ import {
   AcervoItem,
   BookItem,
   CategoryGroup,
+  JsonAcervoEntry,
+  JsonBookEntry,
+  JsonCollectionFile,
   KpiMetrics,
   LibraryDatasets,
+  LibraryTab,
   ReadingStatus,
 } from '../types/book';
 
@@ -17,144 +21,51 @@ export function normalizeText(value: string): string {
     .trim();
 }
 
-function parseCsvLine(line: string): string[] {
-  const result: string[] = [];
-  let current = '';
-  let inQuotes = false;
+function levenshteinDistance(a: string, b: string): number {
+  const matrix: number[][] = Array.from({ length: a.length + 1 }, () =>
+    Array(b.length + 1).fill(0)
+  );
 
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    const nextChar = line[i + 1];
+  for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+  for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
 
-    if (char === '"') {
-      if (inQuotes && nextChar === '"') {
-        current += '"';
-        i++;
-      } else {
-        inQuotes = !inQuotes;
-      }
-    } else if (char === ',' && !inQuotes) {
-      result.push(current.trim());
-      current = '';
-    } else {
-      current += char;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + cost
+      );
     }
   }
 
-  result.push(current.trim());
-  return result;
+  return matrix[a.length][b.length];
 }
 
-function parseCsvRows(csvText: string): { headers: string[]; rows: Record<string, string>[] } {
-  const cleanText = csvText.replace(/^\uFEFF/, '').trim();
-  if (!cleanText) {
-    return { headers: [], rows: [] };
+export function isSameBookEntry(a: BookItem, b: BookItem): boolean {
+  const normAuthorA = normalizeText(a.autor);
+  const normAuthorB = normalizeText(b.autor);
+  if (normAuthorA !== normAuthorB) {
+    return false;
   }
 
-  const lines = cleanText.split(/\r?\n/).filter((line) => line.trim().length > 0);
-  if (lines.length === 0) {
-    return { headers: [], rows: [] };
+  const normTitleA = normalizeText(a.livro);
+  const normTitleB = normalizeText(b.livro);
+  if (normTitleA === normTitleB) {
+    return true;
   }
 
-  const headers = parseCsvLine(lines[0]).map((h) => h.trim());
-  const rows: Record<string, string>[] = [];
-
-  for (let i = 1; i < lines.length; i++) {
-    const values = parseCsvLine(lines[i]);
-    const row: Record<string, string> = {};
-    headers.forEach((header, idx) => {
-      row[header] = values[idx] ?? '';
-    });
-    rows.push(row);
-  }
-
-  return { headers, rows };
-}
-
-export function parseBookListCsv(csvText: string): BookItem[] {
-  const { headers, rows } = parseCsvRows(csvText);
-  if (
-    headers.length === 0 ||
-    !headers.includes('autor') ||
-    !headers.includes('livro')
-  ) {
-    throw new Error('CSV inválido: cabeçalhos obrigatórios (categoria, autor, livro) não encontrados.');
-  }
-
-  return rows.map((row, index) => ({
-    id: Number(row.id) || index + 1,
-    categoria: row.categoria || 'Sem Categoria',
-    autor: row.autor || 'Autor Desconhecido',
-    livro: row.livro || 'Sem Título',
-  }));
-}
-
-export function parseAcervoCsv(csvText: string): AcervoItem[] {
-  const { headers, rows } = parseCsvRows(csvText);
-  if (
-    headers.length === 0 ||
-    !headers.includes('autor') ||
-    !headers.includes('livro')
-  ) {
-    throw new Error(
-      'CSV de acervo inválido: cabeçalhos obrigatórios (categoria, autor, livro) não encontrados.'
-    );
-  }
-
-  return rows.map((row, index) => ({
-    id: Number(row.id) || index + 1,
-    categoria: row.categoria || 'Sem Categoria',
-    autor: row.autor || 'Autor Desconhecido',
-    livro: row.livro || 'Sem Título',
-    dataInicio: row.dataInicio ?? '',
-    dataFinal: row.dataFinal ?? '',
-    tentativas: row.tentativas ?? '',
-  }));
-}
-
-function escapeCsvCell(value: string | number): string {
-  const str = String(value ?? '');
-  if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-    return `"${str.replace(/"/g, '""')}"`;
-  }
-  return str;
-}
-
-export function serializeBookListCsv(items: BookItem[]): string {
-  const header = 'id,categoria,autor,livro';
-  const lines = items.map((item) =>
-    [item.id, item.categoria, item.autor, item.livro].map(escapeCsvCell).join(',')
-  );
-  return [header, ...lines].join('\n');
-}
-
-export function serializeAcervoCsv(items: AcervoItem[]): string {
-  const header = 'id,categoria,autor,livro,dataInicio,dataFinal,tentativas';
-  const lines = items.map((item) =>
-    [
-      item.id,
-      item.categoria,
-      item.autor,
-      item.livro,
-      item.dataInicio,
-      item.dataFinal,
-      item.tentativas,
-    ]
-      .map(escapeCsvCell)
-      .join(',')
-  );
-  return [header, ...lines].join('\n');
+  return levenshteinDistance(normTitleA, normTitleB) <= 2;
 }
 
 export function getReadingStatus(item: AcervoItem): ReadingStatus {
   const start = (item.dataInicio || '').trim();
   const end = (item.dataFinal || '').trim();
-  const attempts = Number(item.tentativas);
 
   const hasRealEndDate = end.length > 0 && end !== '--';
   const hasRealStartDate = start.length > 0 && start !== '--';
-  const isLegacyCompleted =
-    start === '--' && end === '--' && !Number.isNaN(attempts) && attempts > 0;
+  const isLegacyCompleted = start === '--' && end === '--';
 
   if (hasRealEndDate || isLegacyCompleted) {
     return 'Concluído';
@@ -185,6 +96,20 @@ export function parseBrDateUtc(dateStr?: string): number | null {
   }
 
   return utcMs;
+}
+
+export function brDateToIsoInput(dateStr?: string): string {
+  const clean = (dateStr || '').trim();
+  const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(clean);
+  if (!match) return '';
+  return `${match[3]}-${match[2]}-${match[1]}`;
+}
+
+export function isoInputToBrDate(isoStr?: string): string {
+  const clean = (isoStr || '').trim();
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(clean);
+  if (!match) return clean;
+  return `${match[3]}/${match[2]}/${match[1]}`;
 }
 
 export function getReadingDurationDays(item: AcervoItem): number | null {
@@ -281,4 +206,46 @@ export function groupBooksByCategoryAndAuthor<T extends BookItem>(
   });
 
   return result;
+}
+
+export function serializeCollectionToJson(
+  tab: LibraryTab,
+  items: (BookItem | AcervoItem)[]
+): string {
+  const categoryMap = new Map<string, (JsonBookEntry | JsonAcervoEntry)[]>();
+
+  items.forEach((item) => {
+    const cat = item.categoria || 'Sem Categoria';
+    if (!categoryMap.has(cat)) {
+      categoryMap.set(cat, []);
+    }
+
+    if (tab === 'acervo') {
+      const acervo = item as AcervoItem;
+      categoryMap.get(cat)!.push({
+        id: acervo.id,
+        autor: acervo.autor,
+        livro: acervo.livro,
+        dataInicio: acervo.dataInicio ?? '',
+        dataFinal: acervo.dataFinal ?? '',
+        tentativas: acervo.tentativas ?? '',
+      });
+    } else {
+      categoryMap.get(cat)!.push({
+        id: item.id,
+        autor: item.autor,
+        livro: item.livro,
+      });
+    }
+  });
+
+  const structured: JsonCollectionFile<JsonBookEntry | JsonAcervoEntry> = {
+    colecao: tab,
+    categorias: Array.from(categoryMap.entries()).map(([categoria, livros]) => ({
+      categoria,
+      livros,
+    })),
+  };
+
+  return JSON.stringify(structured, null, 2);
 }

@@ -29,6 +29,31 @@ export const CardTop = styled.div`
   gap: 8px;
 `;
 
+export const CardTopActions = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const CardIconButton = styled.button`
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: ${({ theme }) => theme.colors.codeBg};
+  border: 1px solid ${({ theme }) => theme.colors.surfaceBorder};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.textMuted};
+  transition: border-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
 export const IdBadge = styled.span`
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: 11px;
