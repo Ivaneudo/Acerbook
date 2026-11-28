@@ -3,6 +3,7 @@ import {
   AlertCircle,
   BookPlus,
   Check,
+  CheckCircle2,
   Copy,
   Download,
   ExternalLink,
@@ -12,16 +13,15 @@ import {
   X,
 } from 'lucide-react';
 import { useLibrary } from '../../contexts/LibraryContext';
-import { AcervoItem, LibraryTab } from '../../types/book';
+import { BookRecord, LibraryTab } from '../../types/book';
 import {
   brDateToIsoInput,
   isoInputToBrDate,
   parseBrDateUtc,
 } from '../../utils/libraryUtils';
 import {
-  AcervoSectionBox,
+  BannerTextWrap,
   BookForm,
-  CheckboxRow,
   CloseButton,
   CodeBlock,
   CopyCommandButton,
@@ -32,6 +32,10 @@ import {
   FieldSelect,
   FooterButtonsGroup,
   FormRow,
+  InlineEditDuplicateButton,
+  LegacyToggleButton,
+  ListFlagOption,
+  ListFlagsGrid,
   LocalGuideCard,
   LocalGuideHeader,
   LocalGuideTitle,
@@ -46,6 +50,7 @@ import {
   ModalTitleGroup,
   PrimaryButton,
   ProdBadge,
+  ReadingSectionBox,
   RepoLinkButton,
   SecondaryButton,
   SyncHintText,
@@ -59,11 +64,11 @@ cd Acerbook
 npm install
 npm run dev`;
 
-const TAB_OPTIONS: { value: LibraryTab; label: string }[] = [
-  { value: 'acervo', label: 'Meu Acervo (acervo.json)' },
-  { value: 'lidos', label: 'Livros Lidos (lidos.json)' },
-  { value: 'para_ler', label: 'Para Ler (para_ler.json)' },
-  { value: 'para_comprar', label: 'Lista de Compras (para_comprar.json)' },
+const LIST_FLAG_OPTIONS: { id: LibraryTab; label: string }[] = [
+  { id: 'acervo', label: 'Meu Acervo' },
+  { id: 'lidos', label: 'Livros Lidos' },
+  { id: 'para_ler', label: 'Para Ler' },
+  { id: 'para_comprar', label: 'Lista de Compras' },
 ];
 
 const NEW_CATEGORY_SENTINEL = '__NEW_CATEGORY__';
@@ -72,17 +77,19 @@ export const BookFormModal: React.FC = () => {
   const {
     isFormModalOpen,
     isReadOnlyProd,
-    editingTarget,
+    editingBook,
     closeFormModal,
+    openEditModal,
     activeTab,
-    allCategoriesForTab,
-    allAuthorsForTab,
+    allCategories,
+    allAuthors,
+    findDuplicateTitle,
     addBook,
     updateBook,
-    exportJsonForTab,
+    exportDatabaseJson,
   } = useLibrary();
 
-  const [targetTab, setTargetTab] = useState<LibraryTab>(activeTab);
+  const [selectedLists, setSelectedLists] = useState<LibraryTab[]>([activeTab]);
   const [selectedCategoryOption, setSelectedCategoryOption] = useState('');
   const [customCategory, setCustomCategory] = useState('');
   const [autor, setAutor] = useState('');
@@ -90,60 +97,53 @@ export const BookFormModal: React.FC = () => {
   const [dataInicioIso, setDataInicioIso] = useState('');
   const [dataFinalIso, setDataFinalIso] = useState('');
   const [noDatesLegacyRead, setNoDatesLegacyRead] = useState(false);
-  const [tentativas, setTentativas] = useState('1');
+  const [tentativas, setTentativas] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [copied, setCopied] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [duplicateRecord, setDuplicateRecord] = useState<BookRecord | null>(null);
 
   useEffect(() => {
     if (!isFormModalOpen) return;
 
     setValidationError(null);
+    setDuplicateRecord(null);
     setCopied(false);
     setIsSubmitting(false);
 
-    if (editingTarget) {
-      const { tab, item } = editingTarget;
-      setTargetTab(tab);
-      const cats = allCategoriesForTab(tab);
-      if (cats.includes(item.categoria)) {
-        setSelectedCategoryOption(item.categoria);
+    if (editingBook) {
+      setSelectedLists([...editingBook.listas]);
+      if (allCategories.includes(editingBook.categoria)) {
+        setSelectedCategoryOption(editingBook.categoria);
         setCustomCategory('');
       } else {
         setSelectedCategoryOption(NEW_CATEGORY_SENTINEL);
-        setCustomCategory(item.categoria);
+        setCustomCategory(editingBook.categoria);
       }
-      setAutor(item.autor);
-      setLivro(item.livro);
+      setAutor(editingBook.autor);
+      setLivro(editingBook.livro);
 
-      if (tab === 'acervo') {
-        const acervo = item as AcervoItem;
-        const isLegacy =
-          acervo.dataInicio.trim() === '--' && acervo.dataFinal.trim() === '--';
-        setNoDatesLegacyRead(isLegacy);
-        setDataInicioIso(isLegacy ? '' : brDateToIsoInput(acervo.dataInicio));
-        setDataFinalIso(isLegacy ? '' : brDateToIsoInput(acervo.dataFinal));
-        setTentativas(acervo.tentativas || '');
-      } else {
-        setNoDatesLegacyRead(false);
-        setDataInicioIso('');
-        setDataFinalIso('');
-        setTentativas('1');
-      }
+      const isLegacy =
+        editingBook.dataInicio.trim() === '--' &&
+        editingBook.dataFinal.trim() === '--';
+      setNoDatesLegacyRead(isLegacy);
+      setDataInicioIso(isLegacy ? '' : brDateToIsoInput(editingBook.dataInicio));
+      setDataFinalIso(isLegacy ? '' : brDateToIsoInput(editingBook.dataFinal));
+      setTentativas(editingBook.tentativas || '');
     } else {
-      const cats = allCategoriesForTab(activeTab);
-      setTargetTab(activeTab);
-      setSelectedCategoryOption(cats[0] ?? NEW_CATEGORY_SENTINEL);
+      setSelectedLists([activeTab]);
+      setSelectedCategoryOption(allCategories[0] ?? NEW_CATEGORY_SENTINEL);
       setCustomCategory('');
       setAutor('');
       setLivro('');
-      setNoDatesLegacyRead(false);
+      const defaultLegacy = activeTab === 'lidos';
+      setNoDatesLegacyRead(defaultLegacy);
       setDataInicioIso('');
       setDataFinalIso('');
-      setTentativas('1');
+      setTentativas(activeTab === 'lidos' ? '1' : '');
     }
-  }, [isFormModalOpen, editingTarget, activeTab, allCategoriesForTab]);
+  }, [isFormModalOpen, editingBook, activeTab, allCategories]);
 
   useEffect(() => {
     if (!isFormModalOpen) return;
@@ -160,19 +160,53 @@ export const BookFormModal: React.FC = () => {
     return null;
   }
 
-  const availableCategories = allCategoriesForTab(targetTab);
-  const availableAuthors = allAuthorsForTab(targetTab);
-
-  const handleTabChange = (nextTab: LibraryTab) => {
-    setTargetTab(nextTab);
-    const nextCats = allCategoriesForTab(nextTab);
-    if (
-      selectedCategoryOption !== NEW_CATEGORY_SENTINEL &&
-      !nextCats.includes(selectedCategoryOption)
-    ) {
-      setSelectedCategoryOption(nextCats[0] ?? NEW_CATEGORY_SENTINEL);
-    }
+  const toggleListFlag = (tab: LibraryTab) => {
     setValidationError(null);
+    setSelectedLists((prev) => {
+      const exists = prev.includes(tab);
+      if (exists) {
+        return prev.filter((item) => item !== tab);
+      }
+      const next = [...prev, tab];
+      if (tab === 'acervo') {
+        return next.filter((item) => item !== 'para_comprar');
+      }
+      if (tab === 'lidos') {
+        return next.filter((item) => item !== 'para_ler');
+      }
+      return next;
+    });
+  };
+
+  const handleToggleLegacyCompleted = () => {
+    setNoDatesLegacyRead((prev) => {
+      const next = !prev;
+      if (next) {
+        setDataInicioIso('');
+        setDataFinalIso('');
+        if (!tentativas.trim()) {
+          setTentativas('1');
+        }
+        setSelectedLists((lists) => {
+          const filtered = lists.filter((l) => l !== 'para_ler');
+          return filtered.includes('lidos') ? filtered : [...filtered, 'lidos'];
+        });
+      }
+      return next;
+    });
+  };
+
+  const handleEndDateChange = (nextIso: string) => {
+    setDataFinalIso(nextIso);
+    if (nextIso) {
+      setNoDatesLegacyRead(false);
+      setSelectedLists((lists) => {
+        const filtered = lists.filter((l) => l !== 'para_ler');
+        return filtered.includes('lidos') ? filtered : [...filtered, 'lidos'];
+      });
+    } else if (!noDatesLegacyRead) {
+      setSelectedLists((lists) => lists.filter((l) => l !== 'lidos'));
+    }
   };
 
   const handleCopyCommands = async () => {
@@ -190,6 +224,12 @@ export const BookFormModal: React.FC = () => {
     if (isSubmitting) return;
 
     setValidationError(null);
+    setDuplicateRecord(null);
+
+    if (selectedLists.length === 0) {
+      setValidationError('Marque pelo menos uma lista para o livro.');
+      return;
+    }
 
     const finalCategory =
       selectedCategoryOption === NEW_CATEGORY_SENTINEL
@@ -206,42 +246,49 @@ export const BookFormModal: React.FC = () => {
       return;
     }
 
+    const existingDuplicate = findDuplicateTitle(livro, editingBook?.id);
+    if (existingDuplicate) {
+      setDuplicateRecord(existingDuplicate);
+      setValidationError(
+        `Já existe um livro com o título "${existingDuplicate.livro}" (${existingDuplicate.autor}). Use um título único ou edite o registro existente.`
+      );
+      return;
+    }
+
     let finalStart = '';
     let finalEnd = '';
 
-    if (targetTab === 'acervo') {
-      if (noDatesLegacyRead) {
-        finalStart = '--';
-        finalEnd = '--';
-      } else {
-        finalStart = isoInputToBrDate(dataInicioIso);
-        finalEnd = isoInputToBrDate(dataFinalIso);
+    if (noDatesLegacyRead) {
+      finalStart = '--';
+      finalEnd = '--';
+    } else {
+      finalStart = isoInputToBrDate(dataInicioIso);
+      finalEnd = isoInputToBrDate(dataFinalIso);
 
-        if (finalStart && finalEnd) {
-          const startMs = parseBrDateUtc(finalStart);
-          const endMs = parseBrDateUtc(finalEnd);
-          if (startMs !== null && endMs !== null && endMs < startMs) {
-            setValidationError('A data final não pode ser anterior à data de início.');
-            return;
-          }
+      if (finalStart && finalEnd) {
+        const startMs = parseBrDateUtc(finalStart);
+        const endMs = parseBrDateUtc(finalEnd);
+        if (startMs !== null && endMs !== null && endMs < startMs) {
+          setValidationError('A data final não pode ser anterior à data de início.');
+          return;
         }
       }
     }
 
     const payload = {
-      targetTab,
       categoria: finalCategory,
       autor: autor.trim(),
       livro: livro.trim(),
       dataInicio: finalStart,
       dataFinal: finalEnd,
-      tentativas: targetTab === 'acervo' ? tentativas.trim() : '',
+      tentativas: tentativas.trim(),
+      listas: selectedLists,
     };
 
     setIsSubmitting(true);
     try {
-      if (editingTarget) {
-        await updateBook(editingTarget.item.id, editingTarget.tab, payload);
+      if (editingBook) {
+        await updateBook(editingBook.id, payload);
       } else {
         await addBook(payload);
       }
@@ -274,15 +321,15 @@ export const BookFormModal: React.FC = () => {
 
           <ModalDescription>
             Como o <strong>Acerbook</strong> está publicado em produção sem sistema de
-            login, o cadastro e a edição de livros via formulário ficam desativados para
-            preservar o banco JSON oficial desta página.
+            login, o cadastro e a edição de livros ficam desativados para preservar o
+            banco <code>biblioteca.json</code> oficial.
           </ModalDescription>
 
           <LocalGuideCard>
             <LocalGuideHeader>
               <LocalGuideTitle>
                 <Terminal size={14} />
-                Quer montar e atualizar sua própria biblioteca JSON?
+                Quer montar sua própria biblioteca JSON?
               </LocalGuideTitle>
               <CopyCommandButton type="button" onClick={handleCopyCommands}>
                 {copied ? <Check size={12} /> : <Copy size={12} />}
@@ -294,21 +341,16 @@ export const BookFormModal: React.FC = () => {
 
             <LocalStepsList>
               <li>
-                Rodando localmente com <code>npm run dev</code>, o formulário de cadastro
-                e edição é liberado automaticamente e grava direto nos arquivos em{' '}
-                <code>src/data/db/</code>.
+                Rodando localmente com <code>npm run dev</code>, o formulário é liberado e
+                grava diretamente no banco unificado <code>src/data/db/biblioteca.json</code>.
               </li>
               <li>
-                No <code>README.md</code> do repositório há o passo a passo completo para
-                personalizar e publicar sua própria versão.
+                No <code>README.md</code> do repositório você encontra todos os detalhes
+                para personalizar sua biblioteca.
               </li>
             </LocalStepsList>
 
-            <RepoLinkButton
-              href={README_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <RepoLinkButton href={README_URL} target="_blank" rel="noopener noreferrer">
               <svg
                 width="15"
                 height="15"
@@ -324,9 +366,9 @@ export const BookFormModal: React.FC = () => {
           </LocalGuideCard>
 
           <ModalActionsFooter>
-            <SecondaryButton type="button" onClick={() => exportJsonForTab(activeTab)}>
+            <SecondaryButton type="button" onClick={exportDatabaseJson}>
               <Download size={14} />
-              Exportar JSON desta aba
+              Baixar biblioteca.json
             </SecondaryButton>
 
             <PrimaryButton type="button" onClick={closeFormModal}>
@@ -347,7 +389,7 @@ export const BookFormModal: React.FC = () => {
               <BookPlus size={17} />
             </ModalIconBadge>
             <ModalTitle>
-              {editingTarget ? 'Editar Livro' : 'Adicionar Novo Livro'}
+              {editingBook ? 'Editar Livro' : 'Adicionar Novo Livro'}
             </ModalTitle>
           </ModalTitleGroup>
           <CloseButton type="button" onClick={closeFormModal} aria-label="Fechar modal">
@@ -356,43 +398,81 @@ export const BookFormModal: React.FC = () => {
         </ModalHeader>
 
         <ModalDescription>
-          Ao salvar em ambiente local, o arquivo correspondente em{' '}
-          <code>src/data/db/</code> é atualizado automaticamente.
+          Cada livro possui título único em <code>biblioteca.json</code>. Marque abaixo
+          em quais listas ele deve aparecer.
         </ModalDescription>
 
         <BookForm onSubmit={handleSubmit}>
+          <FieldGroup>
+            <FieldLabel>Listas em que o livro aparece (Flags) *</FieldLabel>
+            <ListFlagsGrid>
+              {LIST_FLAG_OPTIONS.map((option) => {
+                const isChecked = selectedLists.includes(option.id);
+                return (
+                  <ListFlagOption key={option.id} checked={isChecked}>
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => toggleListFlag(option.id)}
+                    />
+                    {option.label}
+                  </ListFlagOption>
+                );
+              })}
+            </ListFlagsGrid>
+          </FieldGroup>
+
           <FormRow>
             <FieldGroup>
-              <FieldLabel htmlFor="book-target-tab">Lista (Banco JSON)</FieldLabel>
-              <FieldSelect
-                id="book-target-tab"
-                value={targetTab}
-                onChange={(e) => handleTabChange(e.target.value as LibraryTab)}
-              >
-                {TAB_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </FieldSelect>
+              <FieldLabel htmlFor="book-title">Título do Livro (único) *</FieldLabel>
+              <FieldInput
+                id="book-title"
+                type="text"
+                value={livro}
+                onChange={(e) => {
+                  setLivro(e.target.value);
+                  setDuplicateRecord(null);
+                  setValidationError(null);
+                }}
+                placeholder="Ex.: Perto do Coração Selvagem"
+                required
+              />
             </FieldGroup>
 
             <FieldGroup>
-              <FieldLabel htmlFor="book-category-select">Categoria</FieldLabel>
-              <FieldSelect
-                id="book-category-select"
-                value={selectedCategoryOption}
-                onChange={(e) => setSelectedCategoryOption(e.target.value)}
-              >
-                {availableCategories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
+              <FieldLabel htmlFor="book-author">Autor *</FieldLabel>
+              <FieldInput
+                id="book-author"
+                type="text"
+                list="acerbook-authors-datalist"
+                value={autor}
+                onChange={(e) => setAutor(e.target.value)}
+                placeholder="Ex.: Clarice Lispector"
+                required
+              />
+              <datalist id="acerbook-authors-datalist">
+                {allAuthors.map((itemAuthor) => (
+                  <option key={itemAuthor} value={itemAuthor} />
                 ))}
-                <option value={NEW_CATEGORY_SENTINEL}>+ Nova categoria...</option>
-              </FieldSelect>
+              </datalist>
             </FieldGroup>
           </FormRow>
+
+          <FieldGroup>
+            <FieldLabel htmlFor="book-category-select">Categoria *</FieldLabel>
+            <FieldSelect
+              id="book-category-select"
+              value={selectedCategoryOption}
+              onChange={(e) => setSelectedCategoryOption(e.target.value)}
+            >
+              {allCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+              <option value={NEW_CATEGORY_SENTINEL}>+ Nova categoria...</option>
+            </FieldSelect>
+          </FieldGroup>
 
           {selectedCategoryOption === NEW_CATEGORY_SENTINEL && (
             <FieldGroup>
@@ -408,107 +488,84 @@ export const BookFormModal: React.FC = () => {
             </FieldGroup>
           )}
 
-          <FormRow>
-            <FieldGroup>
-              <FieldLabel htmlFor="book-author">Autor *</FieldLabel>
-              <FieldInput
-                id="book-author"
-                type="text"
-                list="acerbook-authors-datalist"
-                value={autor}
-                onChange={(e) => setAutor(e.target.value)}
-                placeholder="Ex.: Clarice Lispector"
-                required
-              />
-              <datalist id="acerbook-authors-datalist">
-                {availableAuthors.map((itemAuthor) => (
-                  <option key={itemAuthor} value={itemAuthor} />
-                ))}
-              </datalist>
-            </FieldGroup>
+          <ReadingSectionBox>
+            <LegacyToggleButton
+              type="button"
+              active={noDatesLegacyRead}
+              onClick={handleToggleLegacyCompleted}
+            >
+              <CheckCircle2 size={14} />
+              {noDatesLegacyRead
+                ? 'Concluído sem datas registrado (--)'
+                : 'Marcar como concluído sem datas (--)'}
+            </LegacyToggleButton>
 
-            <FieldGroup>
-              <FieldLabel htmlFor="book-title">Título do Livro *</FieldLabel>
-              <FieldInput
-                id="book-title"
-                type="text"
-                value={livro}
-                onChange={(e) => setLivro(e.target.value)}
-                placeholder="Ex.: Perto do Coração Selvagem"
-                required
-              />
-            </FieldGroup>
-          </FormRow>
-
-          {targetTab === 'acervo' && (
-            <AcervoSectionBox>
-              <CheckboxRow>
-                <input
-                  type="checkbox"
-                  checked={noDatesLegacyRead}
-                  onChange={(e) => setNoDatesLegacyRead(e.target.checked)}
-                />
-                Livro já concluído sem registro de datas (usa <code>--</code>)
-              </CheckboxRow>
-
-              <FormRow>
-                <FieldGroup>
-                  <FieldLabel htmlFor="book-start-date">Data de Início</FieldLabel>
-                  <FieldInput
-                    id="book-start-date"
-                    type="date"
-                    value={dataInicioIso}
-                    disabled={noDatesLegacyRead}
-                    onChange={(e) => setDataInicioIso(e.target.value)}
-                  />
-                </FieldGroup>
-
-                <FieldGroup>
-                  <FieldLabel htmlFor="book-end-date">Data Final</FieldLabel>
-                  <FieldInput
-                    id="book-end-date"
-                    type="date"
-                    value={dataFinalIso}
-                    disabled={noDatesLegacyRead}
-                    onChange={(e) => setDataFinalIso(e.target.value)}
-                  />
-                </FieldGroup>
-              </FormRow>
-
+            <FormRow>
               <FieldGroup>
-                <FieldLabel htmlFor="book-attempts">Tentativas de leitura</FieldLabel>
+                <FieldLabel htmlFor="book-start-date">Data de Início</FieldLabel>
                 <FieldInput
-                  id="book-attempts"
-                  type="number"
-                  min={0}
-                  value={tentativas}
-                  onChange={(e) => setTentativas(e.target.value)}
-                  placeholder="Ex.: 1"
+                  id="book-start-date"
+                  type="date"
+                  value={dataInicioIso}
+                  disabled={noDatesLegacyRead}
+                  onChange={(e) => setDataInicioIso(e.target.value)}
                 />
               </FieldGroup>
-              <SyncHintText>
-                Livros concluídos (com Data Final ou marcados como <code>--</code>) são
-                adicionados automaticamente em <code>lidos.json</code>.
-              </SyncHintText>
-            </AcervoSectionBox>
-            
-          )}
+
+              <FieldGroup>
+                <FieldLabel htmlFor="book-end-date">Data Final</FieldLabel>
+                <FieldInput
+                  id="book-end-date"
+                  type="date"
+                  value={dataFinalIso}
+                  disabled={noDatesLegacyRead}
+                  onChange={(e) => handleEndDateChange(e.target.value)}
+                />
+              </FieldGroup>
+            </FormRow>
+
+            <FieldGroup>
+              <FieldLabel htmlFor="book-attempts">Tentativas de leitura</FieldLabel>
+              <FieldInput
+                id="book-attempts"
+                type="number"
+                min={0}
+                value={tentativas}
+                onChange={(e) => setTentativas(e.target.value)}
+                placeholder="Ex.: 1"
+              />
+            </FieldGroup>
+
+            <SyncHintText>
+              Você pode preencher datas ou usar o botão <code>--</code> mesmo em livros que
+              não estejam no seu acervo. Ao preencher a Data Final ou marcar{' '}
+              <code>--</code>, a flag <strong>Livros Lidos</strong> é marcada
+              automaticamente.
+            </SyncHintText>
+          </ReadingSectionBox>
 
           {validationError && (
             <FeedbackBanner variant="error">
-              <AlertCircle size={16} />
-              <span>{validationError}</span>
+              <BannerTextWrap>
+                <AlertCircle size={16} />
+                <span>{validationError}</span>
+              </BannerTextWrap>
+              {duplicateRecord && (
+                <InlineEditDuplicateButton
+                  type="button"
+                  onClick={() => openEditModal(duplicateRecord)}
+                >
+                  Editar existente
+                </InlineEditDuplicateButton>
+              )}
             </FeedbackBanner>
           )}
 
           <ModalActionsFooter>
             <FooterButtonsGroup>
-              <SecondaryButton
-                type="button"
-                onClick={() => exportJsonForTab(targetTab)}
-              >
+              <SecondaryButton type="button" onClick={exportDatabaseJson}>
                 <Download size={14} />
-                Exportar JSON
+                Exportar biblioteca.json
               </SecondaryButton>
             </FooterButtonsGroup>
 
@@ -516,7 +573,7 @@ export const BookFormModal: React.FC = () => {
               <Save size={14} />
               {isSubmitting
                 ? 'Salvando...'
-                : editingTarget
+                : editingBook
                   ? 'Salvar alterações'
                   : 'Adicionar livro'}
             </PrimaryButton>

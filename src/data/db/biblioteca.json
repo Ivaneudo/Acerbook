@@ -1,0 +1,865 @@
+{
+  "versao": 2,
+  "livros": [
+    {
+      "id": 1,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "A paixão segundo G.H",
+      "dataInicio": "17/12/2025",
+      "dataFinal": "13/02/2026",
+      "tentativas": "1",
+      "listas": ["acervo", "lidos"]
+    },
+    {
+      "id": 2,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Água viva",
+      "dataInicio": "13/07/2026",
+      "dataFinal": "22/09/2026",
+      "tentativas": "1",
+      "listas": ["acervo", "lidos"]
+    },
+    {
+      "id": 3,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Graciliano Ramos",
+      "livro": "Vidas Secas",
+      "dataInicio": "15/05/2026",
+      "dataFinal": "11/07/2026",
+      "tentativas": "3",
+      "listas": ["acervo", "lidos"]
+    },
+    {
+      "id": 4,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Machado de Assis",
+      "livro": "Dom Casmurro",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["acervo"]
+    },
+    {
+      "id": 5,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Machado de Assis",
+      "livro": "Memorias Póstumas de Brás Cuba",
+      "dataInicio": "26/11/2026",
+      "dataFinal": "",
+      "tentativas": "1",
+      "listas": ["acervo"]
+    },
+    {
+      "id": 6,
+      "categoria": "Poesia & Prosa Poética",
+      "autor": "Amanda Lovelace",
+      "livro": "A princesa salva a si mesma neste livro",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["acervo", "lidos"]
+    },
+    {
+      "id": 7,
+      "categoria": "Poesia & Prosa Poética",
+      "autor": "Glaidson Oliveira",
+      "livro": "A Indecência das Borboletas (autografado)",
+      "dataInicio": "07/04/2025",
+      "dataFinal": "19/04/2025",
+      "tentativas": "1",
+      "listas": ["acervo", "lidos"]
+    },
+    {
+      "id": 8,
+      "categoria": "Poesia & Prosa Poética",
+      "autor": "Pedro Reis",
+      "livro": "Delírio: Emoções",
+      "dataInicio": "06/10/2023",
+      "dataFinal": "11/10/2023",
+      "tentativas": "1",
+      "listas": ["acervo", "lidos"]
+    },
+    {
+      "id": 9,
+      "categoria": "Romance Contemporâneo & Drama",
+      "autor": "Alice Oseman",
+      "livro": "Heartstopper",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["acervo", "lidos"]
+    },
+    {
+      "id": 10,
+      "categoria": "Romance Contemporâneo & Drama",
+      "autor": "John Green",
+      "livro": "Quem é você, Alasca?",
+      "dataInicio": "23/04/2025",
+      "dataFinal": "26/02/2026",
+      "tentativas": "1",
+      "listas": ["acervo", "lidos"]
+    },
+    {
+      "id": 11,
+      "categoria": "Romance Contemporâneo & Drama",
+      "autor": "Victor Martins",
+      "livro": "Quinze dias",
+      "dataInicio": "20/04/2025",
+      "dataFinal": "21/04/2025",
+      "tentativas": "1",
+      "listas": ["acervo", "lidos"]
+    },
+    {
+      "id": 12,
+      "categoria": "Técnico / Tecnologia",
+      "autor": "O'Reilly",
+      "livro": "Fundamentos da Arquitetura de Software UAME",
+      "dataInicio": "26/11/2026",
+      "dataFinal": "",
+      "tentativas": "1",
+      "listas": ["acervo"]
+    },
+    {
+      "id": 13,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Uma Aprendizagem ou o Livro dos Prazeres",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos"]
+    },
+    {
+      "id": 14,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "A Hora da Estrela",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos"]
+    },
+    {
+      "id": 15,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "José Mauro de Vasconcelos",
+      "livro": "O Meu Pé de Laranja Lima",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 16,
+      "categoria": "Romance Contemporâneo & Drama",
+      "autor": "Beth O'Leary",
+      "livro": "Teto para dois",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 17,
+      "categoria": "Romance Contemporâneo & Drama",
+      "autor": "Beth O'Leary",
+      "livro": "A Troca",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 18,
+      "categoria": "Romance Contemporâneo & Drama",
+      "autor": "John Green",
+      "livro": "A culpa é das estrelas",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 19,
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "autor": "Daniel Handler",
+      "livro": "DESVENTURAS EM SÉRIE: MAU COMEÇO",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 20,
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "autor": "Daniel Handler",
+      "livro": "DESVENTURAS EM SÉRIE: A SALA DOS RÉPTEIS",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 21,
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "autor": "Daniel Handler",
+      "livro": "DESVENTURAS EM SÉRIE: O LADO DAS SANGUESUGAS",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 22,
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "autor": "Daniel Handler",
+      "livro": "DESVENTURAS EM SÉRIE: SERARIA BAIXO-ASTRAL",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 23,
+      "categoria": "Mistério & Suspense (Jovem Adulto)",
+      "autor": "Jennifer Lynn Barnes",
+      "livro": "Jogos de Herança",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 24,
+      "categoria": "Mistério & Suspense (Jovem Adulto)",
+      "autor": "Jennifer Lynn Barnes",
+      "livro": "O Herdeiro Perdido",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 25,
+      "categoria": "Mistério & Suspense (Jovem Adulto)",
+      "autor": "Jennifer Lynn Barnes",
+      "livro": "A Aposta Final",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 26,
+      "categoria": "Infantojuvenil / Drama",
+      "autor": "Penélope Martins",
+      "livro": "Minha vida não é cor-de-rosa",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 27,
+      "categoria": "Poesia & Prosa Poética",
+      "autor": "Igor Pires da Silva",
+      "livro": "Textos Cruéis de Mais para Serem Lidos Rapidamente",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 28,
+      "categoria": "Poesia & Prosa Poética",
+      "autor": "Igor Pires da Silva",
+      "livro": "Textos Cruéis de Mais para Serem Lidos Rapidamente: Onde Dorme o Coração",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 29,
+      "categoria": "Biografia & Memórias",
+      "autor": "Malala Yousafzai",
+      "livro": "Eu Sou Malala",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 30,
+      "categoria": "Não Identificados",
+      "autor": "Autor Desconhecido",
+      "livro": "//(livro que eu esqueci o nome)",
+      "dataInicio": "--",
+      "dataFinal": "--",
+      "tentativas": "1",
+      "listas": ["lidos", "para_comprar"]
+    },
+    {
+      "id": 31,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Todas as Cartas",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 32,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Perto do Coração Selvagem",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 33,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "A descoberta do mundo",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 34,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "A via crucis do corpo",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 35,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Felicidade clandestina",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 36,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Laços de família",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 37,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "O Lustre",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 38,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "A Cidade Sitiada",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 39,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "A Maçã no Escuro",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 40,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Um Sopro de Vida",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 41,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Alguns Contos",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 42,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "A Legião Estrangeira",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 43,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "A Imitação da Rosa",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 44,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Onde Estivestes de Noite",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 45,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "A Bela e a Fera",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 46,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Todos os Contos",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 47,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "O Mistério do Coelho Pensante",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 48,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "A Mulher que Matou os Peixes",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 49,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "A Vida Íntima de Laura",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 50,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Quase de Verdade",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 51,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Como Nasceram as Estrelas",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 52,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Visão do Esplendor",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 53,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "De Corpo Inteiro",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 54,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Para Não Esquecer",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 55,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Correio Feminino",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 56,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Todas as Crônicas",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 57,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Cartas Perto do Coração",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 58,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Correspondências",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 59,
+      "categoria": "Literatura Brasileira / Clássicos",
+      "autor": "Clarice Lispector",
+      "livro": "Minhas Queridas",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 60,
+      "categoria": "Clássicos da Literatura Mundial",
+      "autor": "Katherine Mansfield",
+      "livro": "Êxtase e outros contos",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 61,
+      "categoria": "Clássicos da Literatura Mundial",
+      "autor": "Liev Tolstoi",
+      "livro": "Anna Kariênina",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 62,
+      "categoria": "Ficção Contemporânea & Drama",
+      "autor": "Carla Madeira",
+      "livro": "Véspera",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 63,
+      "categoria": "Ficção Contemporânea & Drama",
+      "autor": "Carla Madeira",
+      "livro": "A natureza da mordida",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 64,
+      "categoria": "Ficção Contemporânea & Drama",
+      "autor": "Carla Madeira",
+      "livro": "Tudo é rio",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 65,
+      "categoria": "Ficção Contemporânea & Drama",
+      "autor": "Hanya Yanagihara",
+      "livro": "Uma vida pequena",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 66,
+      "categoria": "Ficção Contemporânea & Drama",
+      "autor": "Jeferson Tenório",
+      "livro": "O avesso da pele",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 67,
+      "categoria": "Ficção Contemporânea & Realismo Mágico",
+      "autor": "Socorro Acioli",
+      "livro": "A Cabeça do Santo",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 68,
+      "categoria": "Ficção Contemporânea & Realismo Mágico",
+      "autor": "Socorro Acioli",
+      "livro": "Oração para Desaparecer",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 69,
+      "categoria": "Romance Contemporâneo & Drama",
+      "autor": "Nelson Luiz de Carvalho",
+      "livro": "O terceiro travesseiro",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 70,
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "autor": "Daniel Handler",
+      "livro": "DESVENTURAS EM SÉRIE: INFERNO NO COLÉGIO INTERNO",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 71,
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "autor": "Daniel Handler",
+      "livro": "DESVENTURAS EM SÉRIE: O ELEVADOR ERSATZ",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 72,
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "autor": "Daniel Handler",
+      "livro": "DESVENTURAS EM SÉRIE: A CIDADE SINISTRA DOS CORVOS",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 73,
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "autor": "Daniel Handler",
+      "livro": "DESVENTURAS EM SÉRIE: O HOSPITAL HOSTIL",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 74,
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "autor": "Daniel Handler",
+      "livro": "DESVENTURAS EM SÉRIE: O ESPETÁCULO CARNÍVORO",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 75,
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "autor": "Daniel Handler",
+      "livro": "DESVENTURAS EM SÉRIE: O ESCORREGADOR DE GELO",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 76,
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "autor": "Daniel Handler",
+      "livro": "DESVENTURAS EM SÉRIE: A GRUTA GORGÔNEA",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 77,
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "autor": "Daniel Handler",
+      "livro": "DESVENTURAS EM SÉRIE: O PENÚLTIMO PERÍODO",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 78,
+      "categoria": "Aventura & Ficção Infantojuvenil",
+      "autor": "Daniel Handler",
+      "livro": "DESVENTURAS EM SÉRIE: O FIM",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 79,
+      "categoria": "Mistério & Suspense (Jovem Adulto)",
+      "autor": "Jennifer Lynn Barnes",
+      "livro": "Os irmãos Hawthorne",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 80,
+      "categoria": "Terror & Suspense",
+      "autor": "Mark Miller",
+      "livro": "Ninguém vai te ouvir gritar",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 81,
+      "categoria": "Filosofia, Sociologia & Política",
+      "autor": "Byung-Chul Han",
+      "livro": "Sociedade do cansaço",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 82,
+      "categoria": "Filosofia, Sociologia & Política",
+      "autor": "Friedrich Nietzsche, Gabriel Valladão Silva",
+      "livro": "Assim Falou Zaratustra",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 83,
+      "categoria": "Filosofia, Sociologia & Política",
+      "autor": "Gabriela Prioli",
+      "livro": "Ideologias",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 84,
+      "categoria": "Filosofia, Sociologia & Política",
+      "autor": "Leandro Karnal",
+      "livro": "Preconceito",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 85,
+      "categoria": "Filosofia, Sociologia & Política",
+      "autor": "Leandro Karnal",
+      "livro": "O dilema do porco espinho",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    },
+    {
+      "id": 86,
+      "categoria": "Filosofia, Sociologia & Política",
+      "autor": "Platão e Edson Bini",
+      "livro": "Apologia de Sócrates",
+      "dataInicio": "",
+      "dataFinal": "",
+      "tentativas": "",
+      "listas": ["para_ler"]
+    }
+  ]
+}

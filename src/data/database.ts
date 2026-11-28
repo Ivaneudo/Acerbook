@@ -1,52 +1,16 @@
-import acervoRaw from './db/acervo.json';
-import lidosRaw from './db/lidos.json';
-import paraLerRaw from './db/para_ler.json';
-import paraComprarRaw from './db/para_comprar.json';
-import {
-  AcervoItem,
-  BookItem,
-  JsonAcervoEntry,
-  JsonBookEntry,
-  JsonCollectionFile,
-  LibraryDatasets,
-} from '../types/book';
+import bibliotecaRaw from './db/biblioteca.json';
+import { BookRecord, UnifiedDatabaseFile } from '../types/book';
 
-function flattenBookCollection(
-  collection: JsonCollectionFile<JsonBookEntry>
-): BookItem[] {
-  return collection.categorias.flatMap((group) =>
-    group.livros.map((entry) => ({
-      id: entry.id,
-      categoria: group.categoria,
-      autor: entry.autor,
-      livro: entry.livro,
-    }))
-  );
-}
-
-function flattenAcervoCollection(
-  collection: JsonCollectionFile<JsonAcervoEntry>
-): AcervoItem[] {
-  return collection.categorias.flatMap((group) =>
-    group.livros.map((entry) => ({
-      id: entry.id,
-      categoria: group.categoria,
-      autor: entry.autor,
-      livro: entry.livro,
-      dataInicio: entry.dataInicio ?? '',
-      dataFinal: entry.dataFinal ?? '',
-      tentativas: entry.tentativas ?? '',
-    }))
-  );
-}
-
-export function getDefaultDatasets(): LibraryDatasets {
-  return {
-    acervo: flattenAcervoCollection(acervoRaw as JsonCollectionFile<JsonAcervoEntry>),
-    lidos: flattenBookCollection(lidosRaw as JsonCollectionFile<JsonBookEntry>),
-    para_ler: flattenBookCollection(paraLerRaw as JsonCollectionFile<JsonBookEntry>),
-    para_comprar: flattenBookCollection(
-      paraComprarRaw as JsonCollectionFile<JsonBookEntry>
-    ),
-  };
+export function getDefaultBooks(): BookRecord[] {
+  const db = bibliotecaRaw as UnifiedDatabaseFile;
+  return db.livros.map((entry) => ({
+    id: entry.id,
+    categoria: entry.categoria || 'Sem Categoria',
+    autor: entry.autor || 'Autor Desconhecido',
+    livro: entry.livro || 'Sem Título',
+    dataInicio: entry.dataInicio ?? '',
+    dataFinal: entry.dataFinal ?? '',
+    tentativas: entry.tentativas ?? '',
+    listas: Array.isArray(entry.listas) ? [...entry.listas] : [],
+  }));
 }

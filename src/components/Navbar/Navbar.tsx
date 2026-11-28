@@ -48,9 +48,9 @@ export const Navbar: React.FC = () => {
   const {
     activeTab,
     setActiveTab,
-    datasets,
+    tabCounts,
     openAddModal,
-    exportJsonForTab,
+    exportDatabaseJson,
     isReadOnlyProd,
   } = useLibrary();
   const { isDark, toggleTheme } = useThemeMode();
@@ -108,7 +108,7 @@ export const Navbar: React.FC = () => {
                 {tab.icon}
                 {tab.label}
                 <TabBadge active={activeTab === tab.id}>
-                  {datasets[tab.id].length}
+                  {tabCounts[tab.id]}
                 </TabBadge>
               </NavTabButton>
             ))}
@@ -128,8 +128,8 @@ export const Navbar: React.FC = () => {
               Adicionar Livro
             </ActionButton>
             <ActionButton
-              onClick={() => exportJsonForTab(activeTab)}
-              title="Exportar lista atual em JSON"
+              onClick={exportDatabaseJson}
+              title="Exportar banco completo biblioteca.json"
             >
               <Download size={14} />
               Exportar JSON
@@ -165,7 +165,7 @@ export const Navbar: React.FC = () => {
               {tab.icon}
               {tab.label}
             </span>
-            <TabBadge active={activeTab === tab.id}>{datasets[tab.id].length}</TabBadge>
+            <TabBadge active={activeTab === tab.id}>{tabCounts[tab.id]}</TabBadge>
           </MobileTabButton>
         ))}
 
@@ -183,7 +183,7 @@ export const Navbar: React.FC = () => {
           <MobileActionButton
             onClick={() => {
               setIsMobileOpen(false);
-              exportJsonForTab(activeTab);
+              exportDatabaseJson();
             }}
           >
             <Download size={14} />

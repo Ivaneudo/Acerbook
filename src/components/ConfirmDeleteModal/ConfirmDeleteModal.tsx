@@ -22,10 +22,10 @@ import {
 } from './ConfirmDeleteModal.styles';
 
 const TAB_LABELS: Record<LibraryTab, string> = {
-  acervo: 'Meu Acervo (acervo.json)',
-  lidos: 'Livros Lidos (lidos.json)',
-  para_ler: 'Para Ler (para_ler.json)',
-  para_comprar: 'Lista de Compras (para_comprar.json)',
+  acervo: 'Meu Acervo',
+  lidos: 'Livros Lidos',
+  para_ler: 'Para Ler',
+  para_comprar: 'Lista de Compras',
 };
 
 export const ConfirmDeleteModal: React.FC = () => {
@@ -51,8 +51,9 @@ export const ConfirmDeleteModal: React.FC = () => {
     return null;
   }
 
-  const { tab, item, alsoInTabs } = pendingDelete;
-  const hasLinkedLists = alsoInTabs.length > 0;
+  const { tab, item } = pendingDelete;
+  const otherTabs = item.listas.filter((listKey) => listKey !== tab);
+  const hasOtherLists = otherTabs.length > 0;
 
   const handleConfirm = async (removeFromAll: boolean) => {
     if (isDeleting) return;
@@ -80,17 +81,17 @@ export const ConfirmDeleteModal: React.FC = () => {
         </ModalHeader>
 
         <ModalMessage>
-          Deseja remover <strong>"{item.livro}"</strong> ({item.autor}) de{' '}
+          O que deseja fazer com <strong>"{item.livro}"</strong> ({item.autor}) em{' '}
           <strong>{TAB_LABELS[tab]}</strong>?
         </ModalMessage>
 
-        {hasLinkedLists && (
+        {hasOtherLists && (
           <LinkedListsBox>
             <LinkedListsLabel>
-              Este livro também está sincronizado em:
+              Este livro também possui flag ativa em:
             </LinkedListsLabel>
             <LinkedChipsRow>
-              {alsoInTabs.map((otherTab) => (
+              {otherTabs.map((otherTab) => (
                 <LinkedChip key={otherTab}>{TAB_LABELS[otherTab]}</LinkedChip>
               ))}
             </LinkedChipsRow>
@@ -102,14 +103,14 @@ export const ConfirmDeleteModal: React.FC = () => {
             Cancelar
           </CancelButton>
 
-          {hasLinkedLists ? (
+          {hasOtherLists ? (
             <>
               <SecondaryDangerButton
                 type="button"
                 disabled={isDeleting}
                 onClick={() => handleConfirm(false)}
               >
-                Excluir só desta lista
+                Remover só de {TAB_LABELS[tab]}
               </SecondaryDangerButton>
               <PrimaryDangerButton
                 type="button"
@@ -117,14 +118,14 @@ export const ConfirmDeleteModal: React.FC = () => {
                 onClick={() => handleConfirm(true)}
               >
                 <Trash2 size={14} />
-                {isDeleting ? 'Excluindo...' : 'Excluir de todas as listas'}
+                {isDeleting ? 'Excluindo...' : 'Excluir do banco'}
               </PrimaryDangerButton>
             </>
           ) : (
             <PrimaryDangerButton
               type="button"
               disabled={isDeleting}
-              onClick={() => handleConfirm(false)}
+              onClick={() => handleConfirm(true)}
             >
               <Trash2 size={14} />
               {isDeleting ? 'Excluindo...' : 'Confirmar exclusão'}
