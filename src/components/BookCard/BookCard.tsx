@@ -1,7 +1,7 @@
 import React from 'react';
 import { BookOpen, CheckCircle2, Clock, Pencil, Trash2, User } from 'lucide-react';
 import { useLibrary } from '../../contexts/LibraryContext';
-import { AcervoItem, BookItem, ReadingStatus } from '../../types/book';
+import { BookRecord, LibraryTab, ReadingStatus } from '../../types/book';
 import {
   formatReadingDays,
   getReadingDurationDays,
@@ -19,6 +19,8 @@ import {
   CardTopActions,
   CategoryPill,
   IdBadge,
+  ListTagBadge,
+  ListTagsRow,
   MetaItem,
   MetaLabel,
   MetaValue,
@@ -26,13 +28,16 @@ import {
 } from './BookCard.styles';
 
 interface BookCardProps {
-  item: BookItem | AcervoItem;
+  item: BookRecord;
   isAcervo: boolean;
 }
 
-function isAcervoRecord(item: BookItem | AcervoItem): item is AcervoItem {
-  return 'dataInicio' in item || 'dataFinal' in item || 'tentativas' in item;
-}
+const LIST_LABELS: Record<LibraryTab, string> = {
+  acervo: 'Acervo',
+  lidos: 'Lidos',
+  para_ler: 'Para Ler',
+  para_comprar: 'Comprar',
+};
 
 function renderStatusIcon(status: ReadingStatus) {
   if (status === 'Concluído') return <CheckCircle2 size={12} />;
@@ -48,9 +53,17 @@ function formatField(value?: string): string {
 export const BookCard: React.FC<BookCardProps> = ({ item, isAcervo }) => {
   const { activeTab, isReadOnlyProd, openEditModal, requestDeleteBook } = useLibrary();
 
-  const acervoData = isAcervo && isAcervoRecord(item) ? item : null;
-  const status = acervoData ? getReadingStatus(acervoData) : null;
-  const durationDays = acervoData ? getReadingDurationDays(acervoData) : null;
+  const hasReadingInfo = Boolean(
+    isAcervo ||
+      item.listas.includes('acervo') ||
+      item.listas.includes('lidos') ||
+      item.dataInicio.trim() ||
+      item.dataFinal.trim() ||
+      item.tentativas.trim()
+  );
+
+  const status = hasReadingInfo ? getReadingStatus(item) : null;
+  const durationDays = hasReadingInfo ? getReadingDurationDays(item) : null;
 
   const durationDisplay =
     durationDays !== null
@@ -75,7 +88,7 @@ export const BookCard: React.FC<BookCardProps> = ({ item, isAcervo }) => {
               <CardIconButton
                 type="button"
                 onClick={() => openEditModal(item)}
-                title="Editar livro"
+                title="Editar livro e flags"
                 aria-label={`Editar ${item.livro}`}
               >
                 <Pencil size={12} />
@@ -104,15 +117,23 @@ export const BookCard: React.FC<BookCardProps> = ({ item, isAcervo }) => {
       <CardFooter>
         <CategoryPill>{item.categoria}</CategoryPill>
 
-        {acervoData && (
+        <ListTagsRow>
+          {item.listas.map((listKey) => (
+            <ListTagBadge key={listKey} active={listKey === activeTab}>
+              {LIST_LABELS[listKey]}
+            </ListTagBadge>
+          ))}
+        </ListTagsRow>
+
+        {hasReadingInfo && (
           <AcervoMetaGrid>
             <MetaItem>
               <MetaLabel>Início</MetaLabel>
-              <MetaValue>{formatField(acervoData.dataInicio)}</MetaValue>
+              <MetaValue>{formatField(item.dataInicio)}</MetaValue>
             </MetaItem>
             <MetaItem>
               <MetaLabel>Fim</MetaLabel>
-              <MetaValue>{formatField(acervoData.dataFinal)}</MetaValue>
+              <MetaValue>{formatField(item.dataFinal)}</MetaValue>
             </MetaItem>
             <MetaItem>
               <MetaLabel>Tempo de leitura</MetaLabel>
@@ -122,7 +143,7 @@ export const BookCard: React.FC<BookCardProps> = ({ item, isAcervo }) => {
             </MetaItem>
             <MetaItem>
               <MetaLabel>Tentativas</MetaLabel>
-              <MetaValue>{formatField(acervoData.tentativas)}</MetaValue>
+              <MetaValue>{formatField(item.tentativas)}</MetaValue>
             </MetaItem>
           </AcervoMetaGrid>
         )}

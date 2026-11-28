@@ -172,3 +172,26 @@ export const MetaValue = styled('span', {
   color: ${({ theme, highlight }) =>
     highlight ? theme.colors.primary : theme.colors.text};
 `;
+
+export const ListTagsRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+`;
+
+export const ListTagBadge = styled('span', {
+  shouldForwardProp: (prop) => prop !== 'active',
+})<{ active: boolean }>`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: ${({ theme, active }) =>
+    active ? theme.colors.primaryGlow : theme.colors.codeBg};
+  color: ${({ theme, active }) =>
+    active ? theme.colors.primary : theme.colors.textMuted};
+  border: 1px solid
+    ${({ theme, active }) =>
+      active ? theme.colors.primary : theme.colors.surfaceBorder};
+`;

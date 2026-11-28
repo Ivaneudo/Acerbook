@@ -45,7 +45,7 @@ export const HeroHeader: React.FC = () => {
     <HeroSection>
       <EyebrowTag>
         <Terminal size={13} />
-        acerbook / db / {info.badge}
+        acerbook / db / biblioteca.json • {activeTab}
       </EyebrowTag>
       <HeroTitle>
         {info.title.split(' ').slice(0, -1).join(' ')}{' '}

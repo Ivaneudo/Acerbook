@@ -14,7 +14,7 @@ export const ModalOverlay = styled.div`
 
 export const ModalDialog = styled.div`
   width: 100%;
-  max-width: 600px;
+  max-width: 620px;
   background: ${({ theme }) => theme.colors.backgroundSecondary};
   border: 1px solid ${({ theme }) => theme.colors.surfaceBorder};
   border-radius: 16px;
@@ -259,6 +259,11 @@ export const FieldInput = styled.input`
     border-color: ${({ theme }) => theme.colors.primary};
     box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.primaryGlow};
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 export const FieldSelect = styled.select`
@@ -282,7 +287,50 @@ export const FieldSelect = styled.select`
   }
 `;
 
-export const AcervoSectionBox = styled.div`
+export const ListFlagsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+interface ListFlagOptionProps {
+  checked: boolean;
+}
+
+export const ListFlagOption = styled('label', {
+  shouldForwardProp: (prop) => prop !== 'checked',
+})<ListFlagOptionProps>`
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  background: ${({ theme, checked }) =>
+    checked ? theme.colors.surface : theme.colors.codeBg};
+  border: 1px solid
+    ${({ theme, checked }) =>
+      checked ? theme.colors.primary : theme.colors.surfaceBorder};
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 12px;
+  font-weight: ${({ checked }) => (checked ? 600 : 500)};
+  color: ${({ theme, checked }) =>
+    checked ? theme.colors.text : theme.colors.textMuted};
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+
+  input {
+    accent-color: ${({ theme }) => theme.colors.primary};
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+  }
+`;
+
+export const ReadingSectionBox = styled.div`
   background: ${({ theme }) => theme.colors.surface};
   border: 1px solid ${({ theme }) => theme.colors.surfaceBorder};
   border-radius: 12px;
@@ -292,19 +340,45 @@ export const AcervoSectionBox = styled.div`
   gap: 12px;
 `;
 
-export const CheckboxRow = styled.label`
+export const LegacyToggleButton = styled('button', {
+  shouldForwardProp: (prop) => prop !== 'active',
+})<{ active: boolean }>`
+  align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 12.5px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  padding: 8px 12px;
+  border-radius: 8px;
   cursor: pointer;
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 12px;
+  font-weight: 600;
+  background: ${({ theme, active }) =>
+    active ? theme.colors.statusSuccessBg : theme.colors.codeBg};
+  color: ${({ theme, active }) =>
+    active ? theme.colors.statusSuccessText : theme.colors.text};
+  border: 1px solid
+    ${({ theme, active }) =>
+      active ? theme.colors.statusSuccessText : theme.colors.surfaceBorder};
+  transition: all 0.2s ease;
 
-  input {
-    accent-color: ${({ theme }) => theme.colors.primary};
-    width: 15px;
-    height: 15px;
-    cursor: pointer;
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+export const SyncHintText = styled.span`
+  font-size: 11.5px;
+  color: ${({ theme }) => theme.colors.textMuted};
+  line-height: 1.45;
+
+  code {
+    font-family: ${({ theme }) => theme.fonts.display};
+    font-size: 11px;
+    color: ${({ theme }) => theme.colors.text};
+    background: ${({ theme }) => theme.colors.codeBg};
+    padding: 1px 5px;
+    border-radius: 4px;
   }
 `;
 
@@ -319,7 +393,9 @@ export const FeedbackBanner = styled('div', {
   border-radius: 10px;
   font-size: 13px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 8px;
   background: ${({ theme, variant }) =>
     variant === 'error'
@@ -329,6 +405,31 @@ export const FeedbackBanner = styled('div', {
     variant === 'error'
       ? theme.colors.statusReadingText
       : theme.colors.statusSuccessText};
+`;
+
+export const BannerTextWrap = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 200px;
+`;
+
+export const InlineEditDuplicateButton = styled.button`
+  background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 7px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 11.5px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.primary};
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primary};
+    color: #ffffff;
+  }
 `;
 
 export const ModalActionsFooter = styled.div`
@@ -385,20 +486,5 @@ export const PrimaryButton = styled.button`
 
   &:hover {
     background: ${({ theme }) => theme.colors.primaryHover};
-  }
-`;
-
-export const SyncHintText = styled.span`
-  font-size: 11.5px;
-  color: ${({ theme }) => theme.colors.textMuted};
-  line-height: 1.45;
-
-  code {
-    font-family: ${({ theme }) => theme.fonts.display};
-    font-size: 11px;
-    color: ${({ theme }) => theme.colors.text};
-    background: ${({ theme }) => theme.colors.codeBg};
-    padding: 1px 5px;
-    border-radius: 4px;
   }
 `;

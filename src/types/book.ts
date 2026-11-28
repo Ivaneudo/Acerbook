@@ -1,57 +1,34 @@
+
 export type LibraryTab = 'acervo' | 'lidos' | 'para_ler' | 'para_comprar';
 
 export type ViewMode = 'grid' | 'table';
 
 export type ReadingStatus = 'Concluído' | 'Lendo' | 'Não iniciado';
 
-export interface BookItem {
+export interface BookRecord {
   id: number;
   categoria: string;
   autor: string;
   livro: string;
-}
-
-export interface AcervoItem extends BookItem {
   dataInicio: string;
   dataFinal: string;
   tentativas: string;
+  listas: LibraryTab[];
 }
 
-export interface JsonBookEntry {
-  id: number;
-  autor: string;
-  livro: string;
-}
-
-export interface JsonAcervoEntry extends JsonBookEntry {
-  dataInicio: string;
-  dataFinal: string;
-  tentativas: string;
-}
-
-export interface JsonCollectionFile<TEntry extends JsonBookEntry = JsonBookEntry> {
-  colecao: LibraryTab;
-  categorias: {
-    categoria: string;
-    livros: TEntry[];
-  }[];
-}
-
-export interface LibraryDatasets {
-  acervo: AcervoItem[];
-  lidos: BookItem[];
-  para_ler: BookItem[];
-  para_comprar: BookItem[];
+export interface UnifiedDatabaseFile {
+  versao: number;
+  livros: BookRecord[];
 }
 
 export interface BookFormValues {
-  targetTab: LibraryTab;
   categoria: string;
   autor: string;
   livro: string;
   dataInicio: string;
   dataFinal: string;
   tentativas: string;
+  listas: LibraryTab[];
 }
 
 export interface KpiMetrics {
@@ -67,15 +44,15 @@ export interface KpiMetrics {
   booksWithDatesCount: number;
 }
 
-export interface AuthorGroup<T extends BookItem> {
+export interface AuthorGroup {
   autor: string;
-  items: T[];
+  items: BookRecord[];
 }
 
-export interface CategoryGroup<T extends BookItem> {
+export interface CategoryGroup {
   categoria: string;
   total: number;
-  authors: AuthorGroup<T>[];
+  authors: AuthorGroup[];
 }
 
 export interface CategoryCount {

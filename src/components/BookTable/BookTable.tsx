@@ -1,7 +1,7 @@
 import React from 'react';
 import { BookOpen, CheckCircle2, Clock, Pencil, Trash2 } from 'lucide-react';
 import { useLibrary } from '../../contexts/LibraryContext';
-import { AcervoItem, BookItem, ReadingStatus } from '../../types/book';
+import { BookRecord, ReadingStatus } from '../../types/book';
 import {
   formatReadingDays,
   getReadingDurationDays,
@@ -22,12 +22,8 @@ import {
 } from './BookTable.styles';
 
 interface BookTableProps {
-  items: (BookItem | AcervoItem)[];
+  items: BookRecord[];
   isAcervo: boolean;
-}
-
-function isAcervoRecord(item: BookItem | AcervoItem): item is AcervoItem {
-  return 'dataInicio' in item || 'dataFinal' in item || 'tentativas' in item;
 }
 
 function renderStatusIcon(status: ReadingStatus) {
@@ -43,6 +39,7 @@ function formatField(value?: string): string {
 
 export const BookTable: React.FC<BookTableProps> = ({ items, isAcervo }) => {
   const { activeTab, isReadOnlyProd, openEditModal, requestDeleteBook } = useLibrary();
+  const showReadingColumns = isAcervo || activeTab === 'lidos';
 
   return (
     <TableScrollContainer>
@@ -52,7 +49,7 @@ export const BookTable: React.FC<BookTableProps> = ({ items, isAcervo }) => {
             <Th>ID</Th>
             <Th>Livro</Th>
             <Th>Autor</Th>
-            {isAcervo && (
+            {showReadingColumns && (
               <>
                 <Th>Status</Th>
                 <Th>Início</Th>
@@ -66,9 +63,10 @@ export const BookTable: React.FC<BookTableProps> = ({ items, isAcervo }) => {
         </TableHead>
         <tbody>
           {items.map((item) => {
-            const acervo = isAcervo && isAcervoRecord(item) ? item : null;
-            const status = acervo ? getReadingStatus(acervo) : null;
-            const durationDays = acervo ? getReadingDurationDays(acervo) : null;
+            const status = showReadingColumns ? getReadingStatus(item) : null;
+            const durationDays = showReadingColumns
+              ? getReadingDurationDays(item)
+              : null;
 
             const durationDisplay =
               durationDays !== null
@@ -78,7 +76,7 @@ export const BookTable: React.FC<BookTableProps> = ({ items, isAcervo }) => {
                   : '—';
 
             return (
-              <Tr key={`${item.id}-${item.livro}`}>
+              <Tr key={item.id}>
                 <Td>
                   <MonoCell>#{String(item.id).padStart(2, '0')}</MonoCell>
                 </Td>
@@ -86,7 +84,7 @@ export const BookTable: React.FC<BookTableProps> = ({ items, isAcervo }) => {
                   <TitleCell>{item.livro}</TitleCell>
                 </Td>
                 <Td>{item.autor}</Td>
-                {acervo && status && (
+                {showReadingColumns && status && (
                   <>
                     <Td>
                       <TableStatusBadge status={status}>
@@ -95,16 +93,16 @@ export const BookTable: React.FC<BookTableProps> = ({ items, isAcervo }) => {
                       </TableStatusBadge>
                     </Td>
                     <Td>
-                      <MonoCell>{formatField(acervo.dataInicio)}</MonoCell>
+                      <MonoCell>{formatField(item.dataInicio)}</MonoCell>
                     </Td>
                     <Td>
-                      <MonoCell>{formatField(acervo.dataFinal)}</MonoCell>
+                      <MonoCell>{formatField(item.dataFinal)}</MonoCell>
                     </Td>
                     <Td>
                       <MonoCell>{durationDisplay}</MonoCell>
                     </Td>
                     <Td>
-                      <MonoCell>{formatField(acervo.tentativas)}</MonoCell>
+                      <MonoCell>{formatField(item.tentativas)}</MonoCell>
                     </Td>
                   </>
                 )}
